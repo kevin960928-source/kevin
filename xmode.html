@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>一元一次方程式 - 互動探索樂園</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- KaTeX Math Rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <!-- Custom Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f5ff',
+                            100: '#e5edff',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;600;700;900&display=swap');
+        body { font-family: 'Noto Sans TC', sans-serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col selection:bg-brand-500 selection:text-white">
+
+    <!-- Navigation Bar -->
+    <nav class="sticky top-0 z-50 glass-card shadow-sm border-b border-slate-200/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
+                    <i class="fa-solid font-bold text-xl">x</i>
+                </div>
+                <div>
+                    <span class="font-bold text-lg text-slate-800 tracking-tight">一元一次方程式</span>
+                    <span class="text-xs bg-blue-100 text-blue-700 font-semibold px-2 py-0.5 rounded-full ml-1">互動學堂</span>
+                </div>
+            </div>
+            
+            <div class="hidden md:flex items-center space-x-8 text-sm font-semibold text-slate-600">
+                <a href="#concepts" class="hover:text-blue-600 transition-colors"><i class="fa-solid fa-lightbulb mr-1.5 text-amber-500"></i>核心觀念</a>
+                <a href="#lab" class="hover:text-blue-600 transition-colors"><i class="fa-solid fa-scale-balanced mr-1.5 text-indigo-500"></i>天平實驗室</a>
+                <a href="#solver" class="hover:text-blue-600 transition-colors"><i class="fa-solid fa-calculator mr-1.5 text-emerald-500"></i>解題小幫手</a>
+                <a href="#quiz" class="hover:text-blue-600 transition-colors"><i class="fa-solid fa-gamepad mr-1.5 text-rose-500"></i>隨堂挑戰</a>
+            </div>
+
+            <a href="#lab" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-xl transition shadow-sm hover:shadow flex items-center gap-1.5">
+                <span>立即體驗</span>
+                <i class="fa-solid fa-arrow-right text-xs"></i>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative overflow-hidden pt-12 pb-20 lg:pt-20 lg:pb-28 bg-gradient-to-b from-blue-50/80 via-white to-slate-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 bg-blue-100/80 border border-blue-200 text-blue-800 px-3.5 py-1.5 rounded-full text-xs font-semibold">
+                        <span class="flex h-2 w-2 rounded-full bg-blue-600 animate-pulse"></span>
+                        國中數學第一章 關鍵基礎
+                    </div>
+                    
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-tight">
+                        破解未知數 <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">x</span> 的神奇魔法
+                    </h1>
+                    
+                    <p class="text-lg text-slate-600 max-w-2xl mx-auto lg:mx-0 font-normal leading-relaxed">
+                        方程式就像一座平衡的天平！只要掌握「等量公理」與「移項法則」，就能輕鬆解開任何未知數，讓數學變得直觀又有趣。
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-2">
+                        <a href="#lab" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-7 py-3.5 rounded-2xl shadow-lg shadow-blue-500/25 transition hover:-translate-y-0.5 flex items-center justify-center gap-2 text-base">
+                            <i class="fa-solid fa-scale-balanced"></i>
+                            操作天平實驗室
+                        </a>
+                        <a href="#solver" class="bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 font-semibold px-7 py-3.5 rounded-2xl shadow-sm transition flex items-center justify-center gap-2 text-base">
+                            <i class="fa-solid fa-wand-magic-sparkles text-indigo-500"></i>
+                            嘗試解題助手
+                        </a>
+                    </div>
+
+                    <!-- Quick Stats -->
+                    <div class="pt-6 grid grid-cols-3 gap-4 border-t border-slate-200/80 max-w-md mx-auto lg:mx-0 text-center lg:text-left">
+                        <div>
+                            <div class="text-2xl font-black text-slate-800">1 個</div>
+                            <div class="text-xs text-slate-500 font-medium">未知數 (Variable)</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-black text-slate-800">1 次</div>
+                            <div class="text-xs text-slate-500 font-medium">最高次方 (Degree)</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-black text-slate-800">100%</div>
+                            <div class="text-xs text-slate-500 font-medium">邏輯可推導性</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Hero Decorative Visual -->
+                <div class="lg:col-span-5 relative">
+                    <div class="relative bg-white rounded-3xl p-6 shadow-2xl border border-slate-100 max-w-md mx-auto">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">一元一次方程式標準型</span>
+                            <span class="px-2.5 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-lg">ax + b = c</span>
+                        </div>
+
+                        <div class="bg-slate-900 rounded-2xl p-6 text-white shadow-inner font-mono relative overflow-hidden mb-4">
+                            <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-blue-500/20 rounded-full blur-xl"></div>
+                            <div class="text-slate-400 text-xs mb-2">// 範例求解範例</div>
+                            <div class="text-2xl font-bold text-amber-400 mb-2">3x + 5 = 20</div>
+                            <div class="text-sm text-slate-300 space-y-1">
+                                <div><span class="text-blue-400">步驟 1:</span> 3x = 20 - 5 (移項)</div>
+                                <div><span class="text-blue-400">步驟 2:</span> 3x = 15</div>
+                                <div><span class="text-blue-400">步驟 3:</span> x = 15 ÷ 3</div>
+                                <div class="text-emerald-400 font-bold pt-1">答案: x = 5 ✨</div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between text-xs font-medium text-slate-500 px-1">
+                            <span class="flex items-center gap-1"><i class="fa-solid fa-check-circle text-emerald-500"></i> 符合 $a \neq 0$</span>
+                            <span class="flex items-center gap-1"><i class="fa-solid fa-check-circle text-emerald-500"></i> 單一實數解</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- Section 1: Core Concepts -->
+    <section id="concepts" class="py-16 bg-white border-y border-slate-200/60">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <h2 class="text-xs font-bold uppercase tracking-wider text-blue-600 mb-2">Fundamental Concepts</h2>
+                <h3 class="text-3xl font-extrabold text-slate-900">核心觀念與三大法則</h3>
+                <p class="text-slate-600 mt-2">理解概念比死記公式更重要！掌握以下三大法則，解題暢行無阻。</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Concept 1 -->
+                <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200 hover:shadow-lg transition-all hover:-translate-y-1 group">
+                    <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl mb-4 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                        <i class="fa-solid fa-equals"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-800 mb-2">1. 等量公理 (Balance Principle)</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                        等式兩邊同時加、減、乘、除以相同的數（除數不為 0），等式依然成立。就像天平兩端加上或拿走同等重量。
+                    </p>
+                    <div class="bg-white p-3 rounded-xl border border-slate-200 text-xs font-mono text-slate-700">
+                        若 $A = B$，則 $A + c = B + c$
+                    </div>
+                </div>
+
+                <!-- Concept 2 -->
+                <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200 hover:shadow-lg transition-all hover:-translate-y-1 group">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-xl mb-4 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                        <i class="fa-solid fa-right-left"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-800 mb-2">2. 移項法則 (Transposition)</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                        將數項跨過「等號」移動到另一邊時，符號要改變：<strong>加變減、減變加、乘變除、除變乘</strong>。
+                    </p>
+                    <div class="bg-white p-3 rounded-xl border border-slate-200 text-xs font-mono text-slate-700">
+                        $x + 5 = 12 \implies x = 12 - 5$
+                    </div>
+                </div>
+
+                <!-- Concept 3 -->
+                <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200 hover:shadow-lg transition-all hover:-translate-y-1 group">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl mb-4 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                        <i class="fa-solid fa-layer-group"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-800 mb-2">3. 化簡與去括號 (Simplification)</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                        遇到括號運用「分配律」拆開。若括號前為負號，去括號時括號內各項皆需變號。
+                    </p>
+                    <div class="bg-white p-3 rounded-xl border border-slate-200 text-xs font-mono text-slate-700">
+                        $-2(x - 3) = -2x + 6$
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: Interactive Balance Simulator -->
+    <section id="lab" class="py-16 bg-slate-900 text-white relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center max-w-3xl mx-auto mb-10">
+                <span class="bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Interactive Simulator</span>
+                <h2 class="text-3xl font-extrabold mt-3">天平視覺化實驗室</h2>
+                <p class="text-slate-400 mt-2">調整左右兩邊的未知數 $x$ 盒子與數字砝碼，觀察天平如何維持平衡。</p>
+            </div>
+
+            <!-- Simulator App Container -->
+            <div class="bg-slate-800/90 rounded-3xl p-6 sm:p-8 border border-slate-700 shadow-2xl backdrop-blur-md">
+                
+                <!-- Balance Canvas -->
+                <div class="w-full h-64 sm:h-80 bg-slate-950/80 rounded-2xl border border-slate-800 relative flex items-center justify-center overflow-hidden mb-6">
+                    <canvas id="balanceCanvas" class="w-full h-full block"></canvas>
+                </div>
+
+                <!-- Equation Display Banner -->
+                <div class="bg-slate-900 rounded-xl p-4 border border-slate-700/80 text-center mb-8">
+                    <div class="text-xs text-slate-400 font-semibold mb-1">目前天平對應方程式</div>
+                    <div id="simEquationText" class="text-2xl sm:text-3xl font-bold text-amber-400 font-mono">
+                        2x + 3 = 11
+                    </div>
+                    <div id="simBalanceStatus" class="text-xs mt-2 font-bold text-emerald-400">
+                        <i class="fa-solid fa-circle-check mr-1"></i> 天平已保持完全平衡！
+                    </div>
+                </div>
+
+                <!-- Controls Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Left Side Controls -->
+                    <div class="bg-slate-900/60 p-5 rounded-2xl border border-slate-700">
+                        <h4 class="text-sm font-bold text-blue-400 mb-3 flex items-center justify-between">
+                            <span>左盤 (Left Pan)</span>
+                            <span id="leftValueBadge" class="text-xs bg-blue-900/60 text-blue-300 px-2 py-0.5 rounded">總重: 11</span>
+                        </h4>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-xs text-slate-400 flex justify-between mb-1">
+                                    <span>$x$ 盒子數量:</span>
+                                    <span id="leftXCount" class="font-bold text-white">2</span>
+                                </label>
+                                <input type="range" id="leftXSlider" min="0" max="6" value="2" class="w-full accent-blue-500 cursor-pointer">
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-400 flex justify-between mb-1">
+                                    <span>數字砝碼 (+1):</span>
+                                    <span id="leftNumCount" class="font-bold text-white">3</span>
+                                </label>
+                                <input type="range" id="leftNumSlider" min="0" max="20" value="3" class="w-full accent-blue-500 cursor-pointer">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Variable X Setting -->
+                    <div class="bg-slate-900/60 p-5 rounded-2xl border border-slate-700 flex flex-col justify-between">
+                        <div>
+                            <h4 class="text-sm font-bold text-amber-400 mb-3">未知數 $x$ 的設定值</h4>
+                            <p class="text-xs text-slate-400 mb-4">設定 $x$ 代表的隱藏重量，觀察左右兩邊是否達到平衡。</p>
+                            <div class="flex items-center gap-3">
+                                <span class="text-sm font-bold text-slate-300">x = </span>
+                                <input type="number" id="xValueInput" value="4" min="1" max="10" class="bg-slate-800 border border-slate-600 rounded-xl px-3 py-2 text-white font-bold text-center w-20 focus:outline-none focus:border-amber-400">
+                            </div>
+                        </div>
+                        <button id="autoSolveSimBtn" class="mt-4 w-full bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold py-2.5 rounded-xl transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            自動推算使天平平衡的 x 值
+                        </button>
+                    </div>
+
+                    <!-- Right Side Controls -->
+                    <div class="bg-slate-900/60 p-5 rounded-2xl border border-slate-700">
+                        <h4 class="text-sm font-bold text-indigo-400 mb-3 flex items-center justify-between">
+                            <span>右盤 (Right Pan)</span>
+                            <span id="rightValueBadge" class="text-xs bg-indigo-900/60 text-indigo-300 px-2 py-0.5 rounded">總重: 11</span>
+                        </h4>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-xs text-slate-400 flex justify-between mb-1">
+                                    <span>$x$ 盒子數量:</span>
+                                    <span id="rightXCount" class="font-bold text-white">0</span>
+                                </label>
+                                <input type="range" id="rightXSlider" min="0" max="6" value="0" class="w-full accent-indigo-500 cursor-pointer">
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-400 flex justify-between mb-1">
+                                    <span>數字砝碼 (+1):</span>
+                                    <span id="rightNumCount" class="font-bold text-white">11</span>
+                                </label>
+                                <input type="range" id="rightNumSlider" min="0" max="20" value="11" class="w-full accent-indigo-500 cursor-pointer">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: Interactive Step-by-Step Solver -->
+    <section id="solver" class="py-16 bg-slate-50">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-10">
+                <span class="text-xs font-bold uppercase tracking-wider text-emerald-600">Smart Solver</span>
+                <h2 class="text-3xl font-extrabold text-slate-900 mt-1">智能解題小幫手</h2>
+                <p class="text-slate-600 mt-2">輸入任何一元一次方程式，系統將一步步為您解析詳細計算過程。</p>
+            </div>
+
+            <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-200/80">
+                <!-- Input Box -->
+                <div class="flex flex-col sm:flex-row gap-3 mb-6">
+                    <div class="relative flex-1">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                            <i class="fa-solid fa-calculator"></i>
+                        </div>
+                        <input type="text" id="solverInput" value="3x + 4 = x + 12" placeholder="例: 3x + 4 = x + 12 或 2(x - 3) = 10" class="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-300 rounded-2xl text-slate-800 font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-lg transition">
+                    </div>
+                    <button id="solveBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-3.5 rounded-2xl shadow-md transition flex items-center justify-center gap-2 text-base">
+                        <i class="fa-solid fa-play"></i>
+                        開始解析
+                    </button>
+                </div>
+
+                <!-- Quick Examples -->
+                <div class="flex flex-wrap items-center gap-2 mb-8 text-xs">
+                    <span class="text-slate-400 font-semibold">快速範例：</span>
+                    <button class="quick-ex-btn px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition font-mono">2x - 5 = 9</button>
+                    <button class="quick-ex-btn px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition font-mono">5x + 3 = 2x + 15</button>
+                    <button class="quick-ex-btn px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition font-mono">4(x + 1) = 20</button>
+                    <button class="quick-ex-btn px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition font-mono">7x - 2 = 3x + 10</button>
+                </div>
+
+                <!-- Output Solution Steps -->
+                <div id="solutionContainer" class="hidden border-t border-slate-200 pt-6">
+                    <h4 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-emerald-600"></i>
+                        詳細解題步驟 (Step-by-Step Solution)
+                    </h4>
+                    <div id="stepsList" class="space-y-4">
+                        <!-- Dynamic Steps Inject Here -->
+                    </div>
+                </div>
+
+                <!-- Error Alert Box -->
+                <div id="solverError" class="hidden border border-rose-200 bg-rose-50 text-rose-700 p-4 rounded-2xl text-sm flex items-center gap-3">
+                    <i class="fa-solid fa-triangle-exclamation text-lg text-rose-500"></i>
+                    <span id="solverErrorMsg">請輸入格式正確的一元一次方程式（例如：2x + 3 = 9）。</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4: Quiz & Practice Engine -->
+    <section id="quiz" class="py-16 bg-gradient-to-b from-white to-blue-50/50">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-10">
+                <span class="text-xs font-bold uppercase tracking-wider text-rose-600">Practice Challenge</span>
+                <h2 class="text-3xl font-extrabold text-slate-900 mt-1">隨堂解題挑戰賽</h2>
+                <p class="text-slate-600 mt-2">動腦時間！測試您對一元一次方程式的掌握程度。</p>
+            </div>
+
+            <!-- Quiz Card -->
+            <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-200/80">
+                <!-- Quiz Header / Scoreboard -->
+                <div class="flex items-center justify-between pb-6 border-b border-slate-100 mb-6">
+                    <div class="flex items-center gap-2">
+                        <span id="quizDifficultyBadge" class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full">基礎題</span>
+                        <span class="text-slate-400 text-xs font-medium">題目卡</span>
+                    </div>
+                    <div class="flex items-center gap-6">
+                        <div class="text-right">
+                            <div class="text-xs text-slate-400">目前得分</div>
+                            <div id="quizScore" class="text-xl font-black text-blue-600">0</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-xs text-slate-400">連續答對</div>
+                            <div id="quizStreak" class="text-xl font-black text-amber-500">0 🔥</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Problem Area -->
+                <div class="text-center py-6">
+                    <div class="text-xs text-slate-400 font-semibold mb-2">請解出方程式中的 $x$ 值：</div>
+                    <div id="quizQuestion" class="text-3xl sm:text-4xl font-extrabold text-slate-800 font-mono tracking-wide py-2">
+                        2x + 5 = 15
+                    </div>
+                </div>
+
+                <!-- Answer Options Grid -->
+                <div id="quizOptions" class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-6">
+                    <!-- Dynamic Answer Buttons -->
+                </div>
+
+                <!-- Quiz Feedback Box -->
+                <div id="quizFeedback" class="hidden p-4 rounded-2xl text-center font-bold text-sm mb-4">
+                    <!-- Feedback Text -->
+                </div>
+
+                <!-- Next Question Button -->
+                <div class="flex justify-between items-center pt-4 border-t border-slate-100">
+                    <div class="flex gap-2">
+                        <button id="diffEasyBtn" class="px-3 py-1.5 text-xs font-bold rounded-xl border border-slate-200 bg-blue-50 text-blue-700">簡單</button>
+                        <button id="diffMedBtn" class="px-3 py-1.5 text-xs font-bold rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600">中等</button>
+                        <button id="diffHardBtn" class="px-3 py-1.5 text-xs font-bold rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600">進階</button>
+                    </div>
+                    <button id="nextQuestionBtn" class="bg-slate-900 hover:bg-slate-800 text-white font-bold px-6 py-2.5 rounded-xl transition text-sm flex items-center gap-2">
+                        <span>下一題</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-10 border-t border-slate-800 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <div class="flex justify-center items-center gap-2 text-white font-bold text-lg mb-3">
+                <div class="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center text-xs">x</div>
+                <span>一元一次方程式互動學堂</span>
+            </div>
+            <p class="text-xs text-slate-500 max-w-md mx-auto mb-6">
+                專為國中數學打造的互動式學習平台，結合 HTML5 動態體驗與自動化解題推算。
+            </p>
+            <p class="text-xs text-slate-600">© 2026 國中數學互動教學平台. Designed for interactive learning.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize KaTeX render on DOM load
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false}
+                ],
+                throwOnError : false
+            });
+            
+            initBalanceSim();
+            initSolver();
+            initQuiz();
+        });
+
+        /* ========================================================
+           1. BALANCE SIMULATOR CANVAS LOGIC
+           ======================================================== */
+        let simState = {
+            leftX: 2,
+            leftNum: 3,
+            rightX: 0,
+            rightNum: 11,
+            xValue: 4
+        };
+
+        function initBalanceSim() {
+            const canvas = document.getElementById('balanceCanvas');
+            const ctx = canvas.getContext('2d');
+
+            const leftXSlider = document.getElementById('leftXSlider');
+            const leftNumSlider = document.getElementById('leftNumSlider');
+            const rightXSlider = document.getElementById('rightXSlider');
+            const rightNumSlider = document.getElementById('rightNumSlider');
+            const xValueInput = document.getElementById('xValueInput');
+            const autoSolveBtn = document.getElementById('autoSolveSimBtn');
+
+            function updateFromInputs() {
+                simState.leftX = parseInt(leftXSlider.value);
+                simState.leftNum = parseInt(leftNumSlider.value);
+                simState.rightX = parseInt(rightXSlider.value);
+                simState.rightNum = parseInt(rightNumSlider.value);
+                simState.xValue = parseInt(xValueInput.value) || 1;
+
+                document.getElementById('leftXCount').innerText = simState.leftX;
+                document.getElementById('leftNumCount').innerText = simState.leftNum;
+                document.getElementById('rightXCount').innerText = simState.rightX;
+                document.getElementById('rightNumCount').innerText = simState.rightNum;
+
+                updateEquationUI();
+                drawScale();
+            }
+
+            leftXSlider.addEventListener('input', updateFromInputs);
+            leftNumSlider.addEventListener('input', updateFromInputs);
+            rightXSlider.addEventListener('input', updateFromInputs);
+            rightNumSlider.addEventListener('input', updateFromInputs);
+            xValueInput.addEventListener('input', updateFromInputs);
+
+            autoSolveBtn.addEventListener('click', () => {
+                // Solve for x: leftX * x + leftNum = rightX * x + rightNum
+                // (leftX - rightX) * x = rightNum - leftNum
+                const coeff = simState.leftX - simState.rightX;
+                const constVal = simState.rightNum - simState.leftNum;
+
+                if (coeff === 0) {
+                    alert("左右兩邊的 x 數量相同，無法解出唯一的 x！請調整 x 的數量。");
+                    return;
+                }
+
+                const calculatedX = constVal / coeff;
+                if (calculatedX <= 0 || !Number.isInteger(calculatedX)) {
+                    // Adjust sliders to make a clean positive integer x solution
+                    simState.leftX = 2;
+                    simState.leftNum = 3;
+                    simState.rightX = 0;
+                    simState.rightNum = 11;
+                    simState.xValue = 4;
+                    leftXSlider.value = 2;
+                    leftNumSlider.value = 3;
+                    rightXSlider.value = 0;
+                    rightNumSlider.value = 11;
+                    xValueInput.value = 4;
+                } else {
+                    simState.xValue = calculatedX;
+                    xValueInput.value = calculatedX;
+                }
+                updateFromInputs();
+            });
+
+            function updateEquationUI() {
+                const leftStr = formatSide(simState.leftX, simState.leftNum);
+                const rightStr = formatSide(simState.rightX, simState.rightNum);
+                const eqEl = document.getElementById('simEquationText');
+                eqEl.innerText = `${leftStr} = ${rightStr}`;
+
+                const leftTotal = simState.leftX * simState.xValue + simState.leftNum;
+                const rightTotal = simState.rightX * simState.xValue + simState.rightNum;
+
+                document.getElementById('leftValueBadge').innerText = `總重: ${leftTotal}`;
+                document.getElementById('rightValueBadge').innerText = `總重: ${rightTotal}`;
+
+                const statusEl = document.getElementById('simBalanceStatus');
+                if (leftTotal === rightTotal) {
+                    statusEl.className = "text-xs mt-2 font-bold text-emerald-400";
+                    statusEl.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> 天平完美平衡 (當 x = ${simState.xValue})`;
+                } else if (leftTotal > rightTotal) {
+                    statusEl.className = "text-xs mt-2 font-bold text-amber-400";
+                    statusEl.innerHTML = `<i class="fa-solid fa-circle-arrow-down mr-1"></i> 左重右輕 (差異 ${leftTotal - rightTotal})`;
+                } else {
+                    statusEl.className = "text-xs mt-2 font-bold text-amber-400";
+                    statusEl.innerHTML = `<i class="fa-solid fa-circle-arrow-down mr-1"></i> 右重左輕 (差異 ${rightTotal - leftTotal})`;
+                }
+            }
+
+            function formatSide(xCount, numCount) {
+                let parts = [];
+                if (xCount > 0) parts.push(xCount === 1 ? 'x' : `${xCount}x`);
+                if (numCount > 0 || parts.length === 0) parts.push(`${numCount}`);
+                return parts.join(' + ');
+            }
+
+            function drawScale() {
+                // Resize Canvas
+                canvas.width = canvas.parentElement.clientWidth;
+                canvas.height = canvas.parentElement.clientHeight;
+
+                const W = canvas.width;
+                const H = canvas.height;
+                ctx.clearRect(0, 0, W, H);
+
+                const leftTotal = simState.leftX * simState.xValue + simState.leftNum;
+                const rightTotal = simState.rightX * simState.xValue + simState.rightNum;
+                
+                // Tilt calculation
+                const diff = leftTotal - rightTotal;
+                let tiltAngle = Math.max(-0.2, Math.min(0.2, diff * 0.02));
+
+                const centerX = W / 2;
+                const centerY = H * 0.75;
+                const beamLength = Math.min(W * 0.7, 400);
+
+                // Draw Base Stand
+                ctx.beginPath();
+                ctx.moveTo(centerX - 30, centerY + 30);
+                ctx.lineTo(centerX + 30, centerY + 30);
+                ctx.lineTo(centerX, centerY - 80);
+                ctx.closePath();
+                ctx.fillStyle = '#334155';
+                ctx.fill();
+
+                // Fulcrum Pivot Circle
+                ctx.beginPath();
+                ctx.arc(centerX, centerY - 80, 8, 0, Math.PI * 2);
+                ctx.fillStyle = '#f59e0b';
+                ctx.fill();
+
+                // Draw Beam
+                ctx.save();
+                ctx.translate(centerX, centerY - 80);
+                ctx.rotate(tiltAngle);
+
+                // Main Beam Bar
+                ctx.fillStyle = '#64748b';
+                ctx.fillRect(-beamLength/2, -5, beamLength, 10);
+
+                // Left & Right Pan End Points
+                const leftEnd = -beamLength/2;
+                const rightEnd = beamLength/2;
+
+                // Draw Hanging Strings & Pans
+                drawPan(ctx, leftEnd, 0, 'left');
+                drawPan(ctx, rightEnd, 0, 'right');
+
+                ctx.restore();
+            }
+
+            function drawPan(context, x, y, side) {
+                const panWidth = 110;
+                const stringHeight = 70;
+
+                // Strings
+                context.strokeStyle = '#94a3b8';
+                context.lineWidth = 2;
+                context.beginPath();
+                context.moveTo(x, y);
+                context.lineTo(x - panWidth/2, y + stringHeight);
+                context.moveTo(x, y);
+                context.lineTo(x + panWidth/2, y + stringHeight);
+                context.stroke();
+
+                // Pan Plate
+                context.fillStyle = '#475569';
+                context.beginPath();
+                context.ellipse(x, y + stringHeight, panWidth/2, 10, 0, 0, Math.PI * 2);
+                context.fill();
+
+                // Draw Weights / Boxes on Pan
+                const startY = y + stringHeight - 8;
+                let currentY = startY;
+
+                const xCount = side === 'left' ? simState.leftX : simState.rightX;
+                const numCount = side === 'left' ? simState.leftNum : simState.rightNum;
+
+                // Draw x boxes (Blue cubes)
+                let itemX = x - panWidth/2 + 10;
+                for (let i = 0; i < xCount; i++) {
+                    context.fillStyle = '#2563eb';
+                    context.fillRect(itemX, currentY - 22, 20, 22);
+                    context.strokeStyle = '#60a5fa';
+                    context.strokeRect(itemX, currentY - 22, 20, 22);
+                    
+                    context.fillStyle = '#ffffff';
+                    context.font = 'bold 11px sans-serif';
+                    context.fillText('x', itemX + 6, currentY - 7);
+
+                    itemX += 24;
+                    if (itemX > x + panWidth/2 - 20) {
+                        itemX = x - panWidth/2 + 10;
+                        currentY -= 24;
+                    }
+                }
+
+                // Draw numeric weights (Gold circles)
+                for (let i = 0; i < numCount; i++) {
+                    context.beginPath();
+                    context.arc(itemX + 8, currentY - 8, 8, 0, Math.PI * 2);
+                    context.fillStyle = '#d97706';
+                    context.fill();
+                    context.strokeStyle = '#fef08a';
+                    context.lineWidth = 1;
+                    context.stroke();
+
+                    context.fillStyle = '#ffffff';
+                    context.font = 'bold 9px sans-serif';
+                    context.fillText('1', itemX + 6, currentY - 5);
+
+                    itemX += 18;
+                    if (itemX > x + panWidth/2 - 18) {
+                        itemX = x - panWidth/2 + 10;
+                        currentY -= 20;
+                    }
+                }
+            }
+
+            window.addEventListener('resize', drawScale);
+            updateFromInputs();
+        }
+
+        /* ========================================================
+           2. STEP-BY-STEP SOLVER LOGIC
+           ======================================================== */
+        function initSolver() {
+            const solveBtn = document.getElementById('solveBtn');
+            const inputEl = document.getElementById('solverInput');
+            const solutionContainer = document.getElementById('solutionContainer');
+            const stepsList = document.getElementById('stepsList');
+            const errorBox = document.getElementById('solverError');
+            const errorMsg = document.getElementById('solverErrorMsg');
+
+            document.querySelectorAll('.quick-ex-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    inputEl.value = btn.innerText;
+                    solveEquation();
+                });
+            });
+
+            solveBtn.addEventListener('click', solveEquation);
+
+            function solveEquation() {
+                errorBox.classList.add('hidden');
+                solutionContainer.classList.add('hidden');
+                stepsList.innerHTML = '';
+
+                const rawEq = inputEl.value.replace(/\s+/g, '');
+                if (!rawEq.includes('=')) {
+                    showError('方程式必須包含「=」等號符號！');
+                    return;
+                }
+
+                const parts = rawEq.split('=');
+                if (parts.length !== 2 || !parts[0] || !parts[1]) {
+                    showError('請輸入格式完整的左右兩式（如：2x + 3 = 9）。');
+                    return;
+                }
+
+                try {
+                    const leftParsed = parseExpression(parts[0]);
+                    const rightParsed = parseExpression(parts[1]);
+
+                    let steps = [];
+
+                    // Step 0: Original Equation
+                    steps.push({
+                        title: '原方程式',
+                        math: `${formatPoly(leftParsed.a, leftParsed.b)} = ${formatPoly(rightParsed.a, rightParsed.b)}`,
+                        desc: '讀取輸入的方程式'
+                    });
+
+                    // Step 1: Transpose X to Left
+                    const combinedA = leftParsed.a - rightParsed.a;
+                    steps.push({
+                        title: '步驟 1：移項（將未知數 x 集中到左邊）',
+                        math: `${formatPoly(leftParsed.a, leftParsed.b)} - (${formatPoly(rightParsed.a, 0)}) = ${rightParsed.b}`,
+                        desc: `將右邊的 x 項移至左邊，符號變號`
+                    });
+
+                    // Step 2: Transpose Constants to Right
+                    const combinedB = rightParsed.b - leftParsed.b;
+                    steps.push({
+                        title: '步驟 2：將常數項集中到右邊',
+                        math: `${combinedA === 1 ? '' : combinedA === -1 ? '-' : combinedA}x = ${combinedB}`,
+                        desc: '將左邊常數項移至右邊'
+                    });
+
+                    // Step 3: Divide Coefficient
+                    if (combinedA === 0) {
+                        if (combinedB === 0) {
+                            steps.push({
+                                title: '結論',
+                                math: '0x = 0',
+                                desc: '此方程式有無限多組解（無窮多解）。'
+                            });
+                        } else {
+                            steps.push({
+                                title: '結論',
+                                math: `0x = ${combinedB}`,
+                                desc: '此方程式無解（矛盾）。'
+                            });
+                        }
+                    } else {
+                        const sol = combinedB / combinedA;
+                        const solStr = Number.isInteger(sol) ? `${sol}` : `${combinedB}/${combinedA}`;
+                        steps.push({
+                            title: '步驟 3：同除以 x 的係數',
+                            math: `x = ${solStr}`,
+                            desc: `兩邊同除以 ${combinedA}，求得未知數 x 的解`
+                        });
+                    }
+
+                    renderSteps(steps);
+
+                } catch (e) {
+                    showError('無法解析此方程式，請檢查格式是否正確（僅支援一元一次方程式）。');
+                }
+            }
+
+            function parseExpression(expr) {
+                // Returns { a: coefficient of x, b: constant }
+                // Handle parentheses like 2(x-3)
+                let expanded = expr.replace(/(\d+)\(([^)]+)\)/g, (match, coeff, inner) => {
+                    let innerP = parseSimplePoly(inner);
+                    let c = parseInt(coeff);
+                    return `${c * innerP.a}x + ${c * innerP.b}`;
+                });
+
+                return parseSimplePoly(expanded);
+            }
+
+            function parseSimplePoly(str) {
+                let a = 0;
+                let b = 0;
+                // Add explicit plus for easy splitting
+                let formatted = str.replace(/-/g, '+-');
+                let tokens = formatted.split('+').filter(t => t.length > 0);
+
+                tokens.forEach(token => {
+                    if (token.includes('x')) {
+                        let coeffStr = token.replace('x', '');
+                        if (coeffStr === '' || coeffStr === '+') a += 1;
+                        else if (coeffStr === '-') a -= 1;
+                        else a += parseFloat(coeffStr);
+                    } else {
+                        b += parseFloat(token);
+                    }
+                });
+
+                return { a, b };
+            }
+
+            function formatPoly(a, b) {
+                let res = '';
+                if (a !== 0) {
+                    if (a === 1) res += 'x';
+                    else if (a === -1) res += '-x';
+                    else res += `${a}x`;
+                }
+                if (b !== 0 || a === 0) {
+                    if (b > 0 && a !== 0) res += ` + ${b}`;
+                    else if (b < 0 && a !== 0) res += ` - ${Math.abs(b)}`;
+                    else res += `${b}`;
+                }
+                return res;
+            }
+
+            function renderSteps(steps) {
+                solutionContainer.classList.remove('hidden');
+                steps.forEach((s, idx) => {
+                    const stepEl = document.createElement('div');
+                    stepEl.className = "bg-slate-50 border border-slate-200 rounded-2xl p-4 flex items-start gap-4";
+                    stepEl.innerHTML = `
+                        <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center shrink-0 text-sm">
+                            ${idx + 1}
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-bold text-slate-800 text-sm mb-1">${s.title}</div>
+                            <div class="font-mono text-emerald-700 font-bold text-lg mb-1">$${s.math}$</div>
+                            <div class="text-xs text-slate-500">${s.desc}</div>
+                        </div>
+                    `;
+                    stepsList.appendChild(stepEl);
+                });
+
+                renderMathInElement(stepsList, {
+                    delimiters: [{left: '$', right: '$', display: false}]
+                });
+            }
+
+            function showError(msg) {
+                errorMsg.innerText = msg;
+                errorBox.classList.remove('hidden');
+            }
+        }
+
+        /* ========================================================
+           3. QUIZ ENGINE LOGIC
+           ======================================================== */
+        let quizState = {
+            score: 0,
+            streak: 0,
+            difficulty: 'easy', // 'easy', 'medium', 'hard'
+            currentAnswer: null
+        };
+
+        function initQuiz() {
+            const questionEl = document.getElementById('quizQuestion');
+            const optionsContainer = document.getElementById('quizOptions');
+            const feedbackEl = document.getElementById('quizFeedback');
+            const nextBtn = document.getElementById('nextQuestionBtn');
+            const scoreEl = document.getElementById('quizScore');
+            const streakEl = document.getElementById('quizStreak');
+
+            const diffEasyBtn = document.getElementById('diffEasyBtn');
+            const diffMedBtn = document.getElementById('diffMedBtn');
+            const diffHardBtn = document.getElementById('diffHardBtn');
+
+            diffEasyBtn.addEventListener('click', () => setDifficulty('easy'));
+            diffMedBtn.addEventListener('click', () => setDifficulty('medium'));
+            diffHardBtn.addEventListener('click', () => setDifficulty('hard'));
+
+            nextBtn.addEventListener('click', generateQuestion);
+
+            function setDifficulty(diff) {
+                quizState.difficulty = diff;
+                [diffEasyBtn, diffMedBtn, diffHardBtn].forEach(btn => {
+                    btn.className = "px-3 py-1.5 text-xs font-bold rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600";
+                });
+
+                if (diff === 'easy') diffEasyBtn.className = "px-3 py-1.5 text-xs font-bold rounded-xl border border-blue-500 bg-blue-50 text-blue-700";
+                if (diff === 'medium') diffMedBtn.className = "px-3 py-1.5 text-xs font-bold rounded-xl border border-blue-500 bg-blue-50 text-blue-700";
+                if (diff === 'hard') diffHardBtn.className = "px-3 py-1.5 text-xs font-bold rounded-xl border border-blue-500 bg-blue-50 text-blue-700";
+
+                document.getElementById('quizDifficultyBadge').innerText = diff === 'easy' ? '簡單' : diff === 'medium' ? '中等' : '進階';
+                generateQuestion();
+            }
+
+            function generateQuestion() {
+                feedbackEl.classList.add('hidden');
+                optionsContainer.innerHTML = '';
+
+                let a, b, c, xAns, eqStr;
+
+                if (quizState.difficulty === 'easy') {
+                    // ax + b = c
+                    a = Math.floor(Math.random() * 5) + 1;
+                    xAns = Math.floor(Math.random() * 9) + 1;
+                    b = Math.floor(Math.random() * 10) + 1;
+                    c = a * xAns + b;
+                    eqStr = `${a === 1 ? '' : a}x + ${b} = ${c}`;
+                } else if (quizState.difficulty === 'medium') {
+                    // ax + b = cx + d
+                    a = Math.floor(Math.random() * 6) + 3;
+                    c = Math.floor(Math.random() * 2) + 1;
+                    xAns = Math.floor(Math.random() * 8) + 1;
+                    b = Math.floor(Math.random() * 10) + 1;
+                    let d = (a - c) * xAns + b;
+                    eqStr = `${a}x + ${b} = ${c === 1 ? '' : c}x + ${d}`;
+                } else {
+                    // a(x + b) = c
+                    a = Math.floor(Math.random() * 4) + 2;
+                    let innerB = Math.floor(Math.random() * 5) + 1;
+                    xAns = Math.floor(Math.random() * 8) + 1;
+                    c = a * (xAns + innerB);
+                    eqStr = `${a}(x + ${innerB}) = ${c}`;
+                }
+
+                quizState.currentAnswer = xAns;
+                questionEl.innerText = eqStr;
+
+                // Generate Options
+                let options = [xAns];
+                while (options.length < 4) {
+                    let wrong = xAns + (Math.floor(Math.random() * 7) - 3);
+                    if (wrong > 0 && !options.includes(wrong)) {
+                        options.push(wrong);
+                    }
+                }
+
+                // Shuffle options
+                options.sort(() => Math.random() - 0.5);
+
+                options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = "w-full py-3.5 px-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl font-bold text-slate-800 text-lg transition flex items-center justify-between";
+                    btn.innerHTML = `<span>x = ${opt}</span> <i class="fa-regular fa-circle text-slate-300"></i>`;
+                    btn.addEventListener('click', () => checkAnswer(opt, btn));
+                    optionsContainer.appendChild(btn);
+                });
+            }
+
+            function checkAnswer(selectedOpt, btn) {
+                // Disable all option buttons
+                const buttons = optionsContainer.querySelectorAll('button');
+                buttons.forEach(b => b.disabled = true);
+
+                if (selectedOpt === quizState.currentAnswer) {
+                    btn.className = "w-full py-3.5 px-4 bg-emerald-50 border-2 border-emerald-500 rounded-2xl font-bold text-emerald-800 text-lg flex items-center justify-between";
+                    btn.querySelector('i').className = "fa-solid fa-circle-check text-emerald-600";
+                    
+                    quizState.score += 10;
+                    quizState.streak += 1;
+
+                    feedbackEl.className = "p-4 rounded-2xl text-center font-bold text-sm mb-4 bg-emerald-100 text-emerald-800 border border-emerald-200";
+                    feedbackEl.innerHTML = `<i class="fa-solid fa-face-smile mr-1.5"></i> 恭喜答對！獲得 10 分！`;
+                } else {
+                    btn.className = "w-full py-3.5 px-4 bg-rose-50 border-2 border-rose-500 rounded-2xl font-bold text-rose-800 text-lg flex items-center justify-between";
+                    btn.querySelector('i').className = "fa-solid fa-circle-xmark text-rose-600";
+
+                    // Highlight correct one
+                    buttons.forEach(b => {
+                        if (b.innerText.includes(`x = ${quizState.currentAnswer}`)) {
+                            b.className = "w-full py-3.5 px-4 bg-emerald-50 border border-emerald-400 rounded-2xl font-bold text-emerald-800 text-lg flex items-center justify-between";
+                        }
+                    });
+
+                    quizState.streak = 0;
+
+                    feedbackEl.className = "p-4 rounded-2xl text-center font-bold text-sm mb-4 bg-rose-100 text-rose-800 border border-rose-200";
+                    feedbackEl.innerHTML = `<i class="fa-solid fa-circle-info mr-1.5"></i> 答錯囉！正確答案是 x = ${quizState.currentAnswer}`;
+                }
+
+                scoreEl.innerText = quizState.score;
+                streakEl.innerText = `${quizState.streak} 🔥`;
+                feedbackEl.classList.remove('hidden');
+            }
+
+            generateQuestion();
+        }
+    </script>
+</body>
+</html>
