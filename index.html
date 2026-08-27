@@ -1,0 +1,1777 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>國中數學：因式分解大冒險 Pro</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- KaTeX for Math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <!-- Canvas Confetti for rewards -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0284c7', 600: '#0369a1', 700: '#075985' },
+                        secondary: { 100: '#f3e8ff', 500: '#8b5cf6', 600: '#7c3aed' },
+                        accent: { 500: '#f59e0b', 600: '#d97706' }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .math-box {
+            background-color: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+        }
+        .cross-line-1 {
+            stroke: #ef4444;
+            stroke-width: 3;
+            stroke-dasharray: 6;
+            animation: dash 1.2s linear infinite;
+        }
+        .cross-line-2 {
+            stroke: #3b82f6;
+            stroke-width: 3;
+            stroke-dasharray: 6;
+            animation: dash 1.2s linear infinite;
+        }
+        @keyframes dash {
+            to { stroke-dashoffset: -12; }
+        }
+        .tab-btn.active {
+            border-bottom: 3px solid #0284c7;
+            color: #0284c7;
+            font-weight: bold;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Tile Animation */
+        .tile-block {
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .tile-block:hover {
+            transform: scale(1.04);
+        }
+        .pulse-subtle {
+            animation: pulse-subtle 2s infinite;
+        }
+        @keyframes pulse-subtle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.92; transform: scale(1.02); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans select-none">
+
+    <!-- Header / Navigation -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('home')">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-primary-600 to-secondary-500 flex items-center justify-center text-white font-bold text-xl shadow-md transform hover:rotate-6 transition">
+                        <i class="fa-solid font-mono text-lg">x²</i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                            因式分解大冒險 <span class="bg-amber-100 text-amber-700 text-xs px-2 py-0.5 rounded-full font-semibold">Pro 學生版</span>
+                        </h1>
+                        <p class="text-xs text-slate-500">國中數學：圖解觀念、幾何拼圖與十字相乘實驗室</p>
+                    </div>
+                </div>
+
+                <!-- Navigation Tabs -->
+                <nav class="hidden lg:flex space-x-4 h-full">
+                    <button onclick="switchTab('home')" id="tab-home" class="tab-btn active px-2 flex items-center gap-2 text-slate-600 hover:text-primary-600 transition text-sm">
+                        <i class="fa-solid fa-house"></i> 首頁
+                    </button>
+                    <button onclick="switchTab('concepts')" id="tab-concepts" class="tab-btn px-2 flex items-center gap-2 text-slate-600 hover:text-primary-600 transition text-sm">
+                        <i class="fa-solid fa-book-open"></i> 觀念教室
+                    </button>
+                    <button onclick="switchTab('tiles')" id="tab-tiles" class="tab-btn px-2 flex items-center gap-2 text-slate-600 hover:text-primary-600 transition text-sm">
+                        <i class="fa-solid fa-shapes"></i> 幾何面積拼圖
+                    </button>
+                    <button onclick="switchTab('cross-visual')" id="tab-cross-visual" class="tab-btn px-2 flex items-center gap-2 text-slate-600 hover:text-primary-600 transition text-sm">
+                        <i class="fa-solid fa-vial-circle-check"></i> 十字相乘實驗室
+                    </button>
+                    <button onclick="switchTab('solver')" id="tab-solver" class="tab-btn px-2 flex items-center gap-2 text-slate-600 hover:text-primary-600 transition text-sm">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> 解題助手
+                    </button>
+                    <button onclick="switchTab('quiz')" id="tab-quiz" class="tab-btn px-2 flex items-center gap-2 text-slate-600 hover:text-primary-600 transition text-sm">
+                        <i class="fa-solid fa-gamepad text-amber-500"></i> 隨堂闖關挑戰
+                    </button>
+                </nav>
+
+                <!-- Audio Toggle & Quick Stats -->
+                <div class="flex items-center gap-3">
+                    <button id="sound-btn" onclick="toggleSound()" class="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-100 transition text-sm" title="聲音開關">
+                        <i id="sound-icon" class="fa-solid fa-volume-high text-primary-600"></i>
+                    </button>
+                    
+                    <div class="bg-amber-50 border border-amber-200 rounded-full px-3 py-1 flex items-center gap-1.5 text-amber-700 text-sm font-semibold shadow-sm">
+                        <i class="fa-solid fa-star text-amber-500 animate-bounce"></i>
+                        <span id="global-score">0</span> 分
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Nav Bar -->
+        <div class="flex lg:hidden border-t border-slate-100 bg-slate-50 text-xs overflow-x-auto py-1">
+            <button onclick="switchTab('home')" id="mob-tab-home" class="flex-1 py-2 px-3 text-center text-primary-600 font-bold border-b-2 border-primary-600 whitespace-nowrap">
+                首頁
+            </button>
+            <button onclick="switchTab('concepts')" id="mob-tab-concepts" class="flex-1 py-2 px-3 text-center text-slate-600 whitespace-nowrap">
+                觀念教室
+            </button>
+            <button onclick="switchTab('tiles')" id="mob-tab-tiles" class="flex-1 py-2 px-3 text-center text-slate-600 whitespace-nowrap">
+                面積拼圖
+            </button>
+            <button onclick="switchTab('cross-visual')" id="mob-tab-cross-visual" class="flex-1 py-2 px-3 text-center text-slate-600 whitespace-nowrap">
+                十字相乘
+            </button>
+            <button onclick="switchTab('solver')" id="mob-tab-solver" class="flex-1 py-2 px-3 text-center text-slate-600 whitespace-nowrap">
+                解題助手
+            </button>
+            <button onclick="switchTab('quiz')" id="mob-tab-quiz" class="flex-1 py-2 px-3 text-center text-slate-600 whitespace-nowrap">
+                闖關挑戰
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- ================= TAB 0: 學生探索首頁 (Home Portal) ================= -->
+        <section id="section-home" class="space-y-8">
+
+            <!-- 1. Hero 學生歡迎入口看板 -->
+            <div class="relative bg-gradient-to-br from-slate-900 via-indigo-950 to-primary-950 rounded-3xl p-6 sm:p-10 text-white shadow-2xl overflow-hidden border border-indigo-800/40">
+                <!-- Background Ambient Glow & Math Watermarks -->
+                <div class="absolute -right-12 -bottom-16 text-white/5 text-[170px] font-black font-mono select-none pointer-events-none">
+                    (x+a)(x+b)
+                </div>
+                <div class="absolute right-10 top-6 w-72 h-72 bg-primary-500/20 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute left-1/3 bottom-0 w-60 h-60 bg-secondary-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="relative z-10 max-w-4xl space-y-6">
+                    <!-- Badges -->
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 text-xs font-black px-3 py-1 rounded-full shadow-md flex items-center gap-1.5">
+                            <i class="fa-solid fa-crown text-slate-950"></i> 國中數學首選教材
+                        </span>
+                        <span class="bg-white/10 backdrop-blur-md text-indigo-200 text-xs font-semibold px-3 py-1 rounded-full border border-white/10">
+                            <i class="fa-solid fa-wand-magic-sparkles text-amber-300 mr-1"></i> 因式分解視覺化探索島
+                        </span>
+                        <span class="bg-emerald-500/20 text-emerald-300 text-xs font-semibold px-3 py-1 rounded-full border border-emerald-500/30">
+                            <i class="fa-solid fa-circle-check mr-1"></i> 適用 108 課綱國二數學
+                        </span>
+                    </div>
+
+                    <!-- Main Heading -->
+                    <div>
+                        <h1 class="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-primary-200">
+                            玩轉因式分解，數學不再靠死背！
+                        </h1>
+                        <p class="mt-3 text-slate-300 text-sm sm:text-base md:text-lg leading-relaxed max-w-2xl">
+                            專為國中生打造的互動學習基地！結合 <span class="text-amber-300 font-semibold">幾何面積拼圖</span>、<span class="text-sky-300 font-semibold">十字相乘動態實驗室</span>、<span class="text-purple-300 font-semibold">智能步驟解題</span> 與 <span class="text-emerald-300 font-semibold">隨堂闖關挑戰</span>，動手摸得到數學原理！
+                        </p>
+                    </div>
+
+                    <!-- Big Direct Entrance Buttons -->
+                    <div class="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+                        <!-- Primary Action Button: 學生一鍵開始學習 -->
+                        <button onclick="switchTab('concepts')" class="group relative px-8 py-4 bg-gradient-to-r from-primary-500 via-primary-600 to-indigo-600 hover:from-primary-400 hover:to-indigo-500 text-white font-bold rounded-2xl shadow-xl hover:shadow-primary-500/30 transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-3 text-base sm:text-lg">
+                            <span class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-white text-xl group-hover:scale-110 transition">
+                                <i class="fa-solid fa-rocket animate-bounce"></i>
+                            </span>
+                            <div class="text-left">
+                                <div class="leading-tight font-black">學生一鍵直接進入學習</div>
+                                <div class="text-[11px] text-primary-100 font-normal">從觀念圖解開始探索 ➔</div>
+                            </div>
+                        </button>
+
+                        <!-- Secondary Action Button: 立即闖關挑戰 -->
+                        <button onclick="switchTab('quiz')" class="group px-6 py-4 bg-white/10 hover:bg-white/20 text-white font-bold rounded-2xl backdrop-blur-md border border-white/20 transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-3 text-base">
+                            <span class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center text-xl group-hover:rotate-12 transition">
+                                <i class="fa-solid fa-gamepad"></i>
+                            </span>
+                            <div class="text-left">
+                                <div class="leading-tight font-black">直接挑戰隨堂闖關</div>
+                                <div class="text-[11px] text-slate-300 font-normal">測驗 5 關累積積分 ➔</div>
+                            </div>
+                        </button>
+
+                        <!-- Quick Lab Button -->
+                        <button onclick="switchTab('cross-visual')" class="group px-5 py-4 bg-slate-800/80 hover:bg-slate-800 text-slate-200 font-semibold rounded-2xl border border-slate-700 transition flex items-center justify-center gap-2 text-sm">
+                            <i class="fa-solid fa-flask text-rose-400 group-hover:scale-110 transition"></i>
+                            <span>十字相乘實驗室</span>
+                        </button>
+                    </div>
+
+                    <!-- Student Profile Bar -->
+                    <div class="pt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-4 text-xs">
+                        <!-- Character Picker -->
+                        <div class="flex items-center gap-2 bg-slate-900/60 p-1.5 px-3 rounded-xl border border-white/10">
+                            <span class="text-slate-400">冒險者角色：</span>
+                            <div class="flex items-center gap-1">
+                                <button onclick="setAvatar('🚀', '探險家', this)" class="avatar-btn active-avatar px-2 py-1 bg-primary-600/40 border border-primary-400 rounded-lg text-sm" title="探險家">🚀</button>
+                                <button onclick="setAvatar('🧙‍♂️', '數學法師', this)" class="avatar-btn px-2 py-1 hover:bg-white/10 border border-transparent rounded-lg text-sm" title="數學法師">🧙‍♂️</button>
+                                <button onclick="setAvatar('🦸', '幾何英雄', this)" class="avatar-btn px-2 py-1 hover:bg-white/10 border border-transparent rounded-lg text-sm" title="幾何英雄">🦸</button>
+                                <button onclick="setAvatar('🎯', '闖關達人', this)" class="avatar-btn px-2 py-1 hover:bg-white/10 border border-transparent rounded-lg text-sm" title="闖關達人">🎯</button>
+                            </div>
+                            <span id="student-role-display" class="font-bold text-amber-300 ml-1">🚀 探險家</span>
+                        </div>
+
+                        <!-- Live Student Stats -->
+                        <div class="flex items-center gap-4 text-slate-300">
+                            <div class="flex items-center gap-1.5">
+                                <i class="fa-solid fa-star text-amber-400"></i>
+                                <span>目前積分：<b id="home-score" class="text-white font-mono">0</b> 分</span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <i class="fa-solid fa-shield-halved text-emerald-400"></i>
+                                <span>稱號：<b id="home-progress-badge" class="text-emerald-300">新手上路</b></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. 五大核心學習模組直達入口 (Module Entrance Cards) -->
+            <div>
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-2">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-compass text-primary-600"></i> 五大學習探索專區
+                        </h2>
+                        <p class="text-sm text-slate-500">點擊任意卡片按鈕，立刻進入專屬互動工具與學習單元</p>
+                    </div>
+                    <span class="text-xs text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full self-start sm:self-auto font-medium">
+                        🎯 自由挑選，隨時切換
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                    <!-- Card 1: 觀念教室 -->
+                    <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-lg hover:border-primary-400 transition-all duration-300 flex flex-col justify-between group">
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition">
+                                    <i class="fa-solid fa-book-open"></i>
+                                </div>
+                                <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-blue-100 text-blue-700">初學必讀</span>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-800 group-hover:text-primary-600 transition">1. 觀念教室</h3>
+                                <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                                    收錄因式分解 4 大核心方法：提公因式、乘法公式、分組分解與十字相乘概念。
+                                </p>
+                            </div>
+                            <div class="bg-blue-50/50 p-3 rounded-xl border border-blue-100 text-xs text-slate-600 space-y-1 font-mono">
+                                <div>✨ 互動式點擊提公因式</div>
+                                <div>✨ 平方差幾何證明圖解</div>
+                            </div>
+                        </div>
+                        <button onclick="switchTab('concepts')" class="w-full mt-5 py-2.5 bg-blue-50 hover:bg-primary-600 text-primary-700 hover:text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-2 group-hover:shadow">
+                            <span>進入觀念教室</span> <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <!-- Card 2: 幾何面積拼圖 -->
+                    <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-lg hover:border-emerald-400 transition-all duration-300 flex flex-col justify-between group">
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition">
+                                    <i class="fa-solid fa-shapes"></i>
+                                </div>
+                                <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700">視覺化圖解</span>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-800 group-hover:text-emerald-600 transition">2. 幾何面積拼圖</h3>
+                                <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                                    用彩色圖塊直觀理解多項式面積！$(x+a)(x+b)$ 的長寬拼裝一目了然。
+                                </p>
+                            </div>
+                            <div class="bg-emerald-50/50 p-3 rounded-xl border border-emerald-100 text-xs text-slate-600 space-y-1 font-mono">
+                                <div>✨ 即時 SVG 矩形渲染</div>
+                                <div>✨ 滑動拉桿自訂長寬邊長</div>
+                            </div>
+                        </div>
+                        <button onclick="switchTab('tiles')" class="w-full mt-5 py-2.5 bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-2 group-hover:shadow">
+                            <span>進入面積拼圖</span> <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <!-- Card 3: 十字相乘實驗室 -->
+                    <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-lg hover:border-rose-400 transition-all duration-300 flex flex-col justify-between group">
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition">
+                                    <i class="fa-solid fa-vial-circle-check"></i>
+                                </div>
+                                <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-rose-100 text-rose-700">核心神器</span>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-800 group-hover:text-rose-600 transition">3. 十字相乘實驗室</h3>
+                                <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                                    支援「動態滑動探索」與「手動試錯挑戰」雙模式，徹底掌握交叉相乘。
+                                </p>
+                            </div>
+                            <div class="bg-rose-50/50 p-3 rounded-xl border border-rose-100 text-xs text-slate-600 space-y-1 font-mono">
+                                <div>✨ 動態交叉相乘對角線動畫</div>
+                                <div>✨ 因子配對驗證即時回饋</div>
+                            </div>
+                        </div>
+                        <button onclick="switchTab('cross-visual')" class="w-full mt-5 py-2.5 bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-2 group-hover:shadow">
+                            <span>進入十字相乘實驗室</span> <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <!-- Card 4: 智能解題助手 -->
+                    <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-lg hover:border-purple-400 transition-all duration-300 flex flex-col justify-between group">
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                </div>
+                                <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-purple-100 text-purple-700">作業神器</span>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-800 group-hover:text-purple-600 transition">4. 智能解題助手</h3>
+                                <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                                    輸入任意二次三項式係數 $a, b, c$，系統立刻產生分解步驟與解答。
+                                </p>
+                            </div>
+                            <div class="bg-purple-50/50 p-3 rounded-xl border border-purple-100 text-xs text-slate-600 space-y-1 font-mono">
+                                <div>✨ 步驟 1：拆解二次項與常數項</div>
+                                <div>✨ 步驟 2：十字相乘驗證與結果</div>
+                            </div>
+                        </div>
+                        <button onclick="switchTab('solver')" class="w-full mt-5 py-2.5 bg-purple-50 hover:bg-purple-600 text-purple-700 hover:text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-2 group-hover:shadow">
+                            <span>進入解題助手</span> <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <!-- Card 5: 隨堂闖關挑戰 -->
+                    <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-lg hover:border-amber-400 transition-all duration-300 flex flex-col justify-between group">
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition">
+                                    <i class="fa-solid fa-gamepad"></i>
+                                </div>
+                                <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-700">趣味測驗</span>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-800 group-hover:text-amber-600 transition">5. 隨堂闖關挑戰</h3>
+                                <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                                    5 道階梯式挑戰題（基礎 ➔ 公式 ➔ 進階 ➔ 挑戰），賺取積分獲取專屬稱號！
+                                </p>
+                            </div>
+                            <div class="bg-amber-50/50 p-3 rounded-xl border border-amber-100 text-xs text-slate-600 space-y-1 font-mono">
+                                <div>✨ 答對彩帶慶祝與連勝音效</div>
+                                <div>✨ 智慧題目提示功能</div>
+                            </div>
+                        </div>
+                        <button onclick="switchTab('quiz')" class="w-full mt-5 py-2.5 bg-amber-50 hover:bg-amber-500 text-amber-800 hover:text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-2 group-hover:shadow">
+                            <span>進入闖關挑戰</span> <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <!-- Card 6: 國中數學因式分解心法卡 -->
+                    <div class="bg-gradient-to-br from-indigo-50 to-slate-100 rounded-2xl p-6 border border-indigo-200/70 shadow-sm flex flex-col justify-between">
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-2 text-indigo-700 font-bold text-sm">
+                                <i class="fa-solid fa-bookmark"></i> 因式分解三字口訣秘笈
+                            </div>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                解題遇到瓶頸時，牢記解題三步驟：
+                            </p>
+                            <div class="space-y-2 text-xs font-semibold text-slate-700">
+                                <div class="bg-white p-2 rounded-lg border border-indigo-100 shadow-sm flex items-center gap-2">
+                                    <span class="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px] font-bold">1</span>
+                                    <span><b>先提公因式</b>（有公因式必先提出）</span>
+                                </div>
+                                <div class="bg-white p-2 rounded-lg border border-indigo-100 shadow-sm flex items-center gap-2">
+                                    <span class="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px] font-bold">2</span>
+                                    <span><b>再看公式法</b>（平方差 / 完全平方）</span>
+                                </div>
+                                <div class="bg-white p-2 rounded-lg border border-indigo-100 shadow-sm flex items-center gap-2">
+                                    <span class="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px] font-bold">3</span>
+                                    <span><b>十字相乘法</b>（拆兩端，乘中間）</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-[11px] text-indigo-600 text-center font-bold">
+                            💡 熟能生巧，跟著冒險島一起通關！
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- 3. 三大學習建議路線 (Learning Pathways) -->
+            <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-route text-primary-600"></i> 不知道從何開始？試試推薦學習路線
+                    </h2>
+                    <p class="text-xs sm:text-sm text-slate-500">根據你的學習進度選擇最適合的入口，一步步成為數學大師</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <!-- Pathway 1: 新手奠基 -->
+                    <div class="p-5 rounded-2xl border-2 border-emerald-100 bg-emerald-50/30 hover:border-emerald-300 transition space-y-3 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-bold text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full">🌱 路線一</span>
+                                <span class="text-xs text-slate-400">約 10 分鐘</span>
+                            </div>
+                            <h3 class="font-bold text-slate-800 text-base">觀念新手奠基班</h3>
+                            <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                                適合剛接觸因式分解的同學，先從生活比喻與幾何面積建立具體心智模型。
+                            </p>
+                            <div class="mt-3 text-xs text-slate-600 space-y-1.5">
+                                <div class="flex items-center gap-1.5"><i class="fa-solid fa-check text-emerald-500 text-[10px]"></i> 閱讀觀念教室 4 大分解法</div>
+                                <div class="flex items-center gap-1.5"><i class="fa-solid fa-check text-emerald-500 text-[10px]"></i> 操作幾何拼圖看面積</div>
+                            </div>
+                        </div>
+                        <button onclick="switchTab('concepts')" class="w-full mt-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition shadow-sm">
+                            啟動新手路線 ➔
+                        </button>
+                    </div>
+
+                    <!-- Pathway 2: 核心精熟 -->
+                    <div class="p-5 rounded-2xl border-2 border-rose-100 bg-rose-50/30 hover:border-rose-300 transition space-y-3 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-bold text-rose-700 bg-rose-100 px-2.5 py-0.5 rounded-full">⚡ 路線二</span>
+                                <span class="text-xs text-slate-400">約 15 分鐘</span>
+                            </div>
+                            <h3 class="font-bold text-slate-800 text-base">十字相乘精熟班</h3>
+                            <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                                專攻十字相乘核心算法！透過動態探索與手動試錯，鍛鍊數字因數配對敏銳度。
+                            </p>
+                            <div class="mt-3 text-xs text-slate-600 space-y-1.5">
+                                <div class="flex items-center gap-1.5"><i class="fa-solid fa-check text-rose-500 text-[10px]"></i> 動態實驗室觀察交叉項</div>
+                                <div class="flex items-center gap-1.5"><i class="fa-solid fa-check text-rose-500 text-[10px]"></i> 手動拆解試錯挑戰練習</div>
+                            </div>
+                        </div>
+                        <button onclick="switchTab('cross-visual')" class="w-full mt-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition shadow-sm">
+                            啟動精熟路線 ➔
+                        </button>
+                    </div>
+
+                    <!-- Pathway 3: 考前衝刺 -->
+                    <div class="p-5 rounded-2xl border-2 border-amber-100 bg-amber-50/30 hover:border-amber-300 transition space-y-3 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-bold text-amber-700 bg-amber-100 px-2.5 py-0.5 rounded-full">🏆 路線三</span>
+                                <span class="text-xs text-slate-400">約 10 分鐘</span>
+                            </div>
+                            <h3 class="font-bold text-slate-800 text-base">實戰測驗衝刺班</h3>
+                            <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                                考前檢測實力！直接進行 5 道闖關考題，遇到不會的多項式立即呼叫解題助手。
+                            </p>
+                            <div class="mt-3 text-xs text-slate-600 space-y-1.5">
+                                <div class="flex items-center gap-1.5"><i class="fa-solid fa-check text-amber-500 text-[10px]"></i> 挑戰 5 關累積 100 分</div>
+                                <div class="flex items-center gap-1.5"><i class="fa-solid fa-check text-amber-500 text-[10px]"></i> 獲取大師稱號與成就</div>
+                            </div>
+                        </div>
+                        <button onclick="switchTab('quiz')" class="w-full mt-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold transition shadow-sm">
+                            啟動衝刺路線 ➔
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ================= TAB 1: 觀念教室 ================= -->
+        <section id="section-concepts" class="hidden space-y-6">
+            <!-- Back to Home Bar -->
+            <div class="flex items-center justify-between bg-white px-4 py-2.5 rounded-xl border border-slate-200 text-xs shadow-sm">
+                <button onclick="switchTab('home')" class="text-primary-600 hover:text-primary-700 font-bold flex items-center gap-1.5">
+                    <i class="fa-solid fa-arrow-left"></i> 返回探索首頁
+                </button>
+                <span class="text-slate-400">單元 1 / 5 ｜ 觀念教室</span>
+            </div>
+            <!-- Banner -->
+            <div class="bg-gradient-to-r from-primary-600 via-indigo-600 to-secondary-600 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+                <div class="absolute -right-6 -bottom-6 text-white/10 text-9xl font-bold font-mono">x²</div>
+                <h2 class="text-2xl font-bold mb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-lightbulb text-amber-300"></i> 什麼是因式分解？ (Factorization)
+                </h2>
+                <p class="text-primary-100 leading-relaxed max-w-3xl text-sm sm:text-base">
+                    因式分解就是把一個「多項式」化成兩個或多個「因式乘積」的過程。這就像是把數字拆解成質因數一樣（例如：$12 = 2 \times 2 \times 3$），多項式也可以拆解成更簡單的乘法組合（例如：$x^2 - 4 = (x+2)(x-2)$）。
+                </p>
+            </div>
+
+            <!-- 4 Major Methods Interactive Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <!-- Method 1: Interactive Common Factor -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 font-bold flex items-center justify-center">1</span>
+                                <h3 class="text-lg font-bold text-slate-800">提公因式法 (Common Factor)</h3>
+                            </div>
+                            <span class="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded-full font-medium">點擊體驗</span>
+                        </div>
+                        <p class="text-slate-600 text-sm mb-4">找出每一項共同擁有的因數或變數，提出放在括號外。</p>
+                        
+                        <!-- Interactive Box -->
+                        <div class="bg-blue-50/50 p-4 rounded-xl border border-blue-100 space-y-3">
+                            <div class="text-xs text-slate-500 font-semibold">點擊下方多項式中的「公因數」試試看：</div>
+                            <div class="flex items-center justify-center gap-2 text-xl font-mono py-2 bg-white rounded-lg border border-slate-200 shadow-inner">
+                                <button onclick="interactCommonFactor(this, '3x')" class="px-2 py-1 rounded hover:bg-amber-100 text-slate-800 transition font-bold" id="cf-part1">3x²</button>
+                                <span>+</span>
+                                <button onclick="interactCommonFactor(this, '3x')" class="px-2 py-1 rounded hover:bg-amber-100 text-slate-800 transition font-bold" id="cf-part2">6x</button>
+                            </div>
+                            <div id="cf-output" class="text-xs text-center font-semibold text-primary-700 min-h-[20px]">
+                                提示：點擊 3x² 或 6x 找出公因式
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-xs text-slate-500 bg-amber-50 p-3 rounded-lg border border-amber-100 mt-4">
+                        <span class="font-bold text-amber-700"><i class="fa-solid fa-lightbulb"></i> 心法：</span> 
+                        就像分配律 $a(b+c) = ab + ac$ 的逆向操作！
+                    </div>
+                </div>
+
+                <!-- Method 2: Multiplication Formulas -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 font-bold flex items-center justify-center">2</span>
+                                <h3 class="text-lg font-bold text-slate-800">乘法公式法 (Special Formulas)</h3>
+                            </div>
+                            <button onclick="toggleFormulaMode()" id="formula-toggle-btn" class="text-xs bg-emerald-100 hover:bg-emerald-200 text-emerald-800 px-2.5 py-1 rounded-full font-semibold transition">
+                                切換：展開 ⇄ 因式分解
+                            </button>
+                        </div>
+                        <p class="text-slate-600 text-sm mb-4">熟記乘法公式，看到特殊結構立刻逆向分解！</p>
+                        
+                        <div class="bg-emerald-50/50 p-4 rounded-xl border border-emerald-100 space-y-3 font-mono text-sm">
+                            <div class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-sm flex justify-between items-center">
+                                <span class="text-xs text-slate-400 font-sans">平方差：</span>
+                                <span id="formula-diff">$$a^2 - b^2 = (a+b)(a-b)$$</span>
+                            </div>
+                            <div class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-sm flex justify-between items-center">
+                                <span class="text-xs text-slate-400 font-sans">完全平方：</span>
+                                <span id="formula-sq">$$a^2 \pm 2ab + b^2 = (a \pm b)^2$$</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="showGeometricProofModal()" class="w-full mt-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-vector-square text-emerald-600"></i> 查看平方差幾何圖解證明
+                    </button>
+                </div>
+
+                <!-- Method 3: Grouping Method -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="w-8 h-8 rounded-lg bg-purple-100 text-purple-600 font-bold flex items-center justify-center">3</span>
+                            <h3 class="text-lg font-bold text-slate-800">分組分解法 (Grouping)</h3>
+                        </div>
+                        <p class="text-slate-600 text-sm mb-4">當項數較多（通常 4 項）且無全體公因式時，先適當「兩兩分組」再提公因式。</p>
+                        <div class="bg-purple-50/50 p-4 rounded-xl border border-purple-100 space-y-2 text-center font-mono">
+                            <div class="text-sm text-slate-700">$$ax + ay + bx + by$$</div>
+                            <div class="text-xs text-purple-600 font-sans">↓ 前兩項一組，後兩項一組</div>
+                            <div class="text-sm text-slate-800">$= a(x+y) + b(x+y)$</div>
+                            <div class="text-xs text-purple-600 font-sans">↓ 提出共同的 $(x+y)$</div>
+                            <div class="text-base font-bold text-purple-700">$= (a+b)(x+y)$</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Method 4: Cross Multiplication -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="w-8 h-8 rounded-lg bg-rose-100 text-rose-600 font-bold flex items-center justify-center">4</span>
+                            <h3 class="text-lg font-bold text-slate-800">十字相乘法 (Cross-Multiplication)</h3>
+                        </div>
+                        <p class="text-slate-600 text-sm mb-4">國中因式分解的核心！處理二次三項式 $ax^2 + bx + c$ 最強大的武器。</p>
+                        <div class="bg-rose-50/50 p-4 rounded-xl border border-rose-100 text-center space-y-2">
+                            <p class="text-xs text-slate-500 mb-1">拆二次項與常數項，交叉相乘湊出一項</p>
+                            <div class="font-mono text-slate-800 text-base font-bold">
+                                $$x^2 + (p+q)x + pq = (x+p)(x+q)$$
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="switchTab('cross-visual')" class="w-full mt-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-play"></i> 前往十字相乘實驗室試試看
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================= TAB 2: 幾何面積拼圖 (Algebra Tiles) ================= -->
+        <section id="section-tiles" class="hidden space-y-6">
+            <!-- Back to Home Bar -->
+            <div class="flex items-center justify-between bg-white px-4 py-2.5 rounded-xl border border-slate-200 text-xs shadow-sm">
+                <button onclick="switchTab('home')" class="text-primary-600 hover:text-primary-700 font-bold flex items-center gap-1.5">
+                    <i class="fa-solid fa-arrow-left"></i> 返回探索首頁
+                </button>
+                <span class="text-slate-400">單元 2 / 5 ｜ 幾何面積拼圖</span>
+            </div>
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-shapes text-primary-600"></i> 幾何面積拼圖 (Algebra Tiles)
+                        </h2>
+                        <p class="text-sm text-slate-500">因式分解就是將多項式的總面積，拼成一個長為 $(x+a)$、寬為 $(x+b)$ 的大長方形！</p>
+                    </div>
+
+                    <!-- Example Selector -->
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="setTilePreset(1, 5, 6)" class="px-3 py-1.5 bg-slate-100 hover:bg-primary-50 hover:text-primary-600 border border-slate-200 rounded-lg text-xs font-medium transition">
+                            $x^2 + 5x + 6$
+                        </button>
+                        <button onclick="setTilePreset(1, 4, 3)" class="px-3 py-1.5 bg-slate-100 hover:bg-primary-50 hover:text-primary-600 border border-slate-200 rounded-lg text-xs font-medium transition">
+                            $x^2 + 4x + 3$
+                        </button>
+                        <button onclick="setTilePreset(1, 6, 8)" class="px-3 py-1.5 bg-slate-100 hover:bg-primary-50 hover:text-primary-600 border border-slate-200 rounded-lg text-xs font-medium transition">
+                            $x^2 + 6x + 8$
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tile Interactive Controls Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                    <!-- Controls -->
+                    <div class="lg:col-span-4 bg-slate-50 p-5 rounded-xl border border-slate-200 space-y-5">
+                        <h3 class="font-bold text-slate-700 text-sm border-b pb-2 flex items-center justify-between">
+                            <span>調整矩形邊長參數</span>
+                            <span class="text-xs font-normal text-slate-500">(僅限正係數展示)</span>
+                        </h3>
+
+                        <!-- Dimension a -->
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold mb-1">
+                                <span>長度增加量 $a$</span>
+                                <span id="val-tile-a" class="text-primary-600 font-bold">2</span>
+                            </div>
+                            <input type="range" id="input-tile-a" min="1" max="5" value="2" step="1" oninput="updateTileVisualizer()" class="w-full accent-primary-600 cursor-pointer">
+                        </div>
+
+                        <!-- Dimension b -->
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold mb-1">
+                                <span>寬度增加量 $b$</span>
+                                <span id="val-tile-b" class="text-primary-600 font-bold">3</span>
+                            </div>
+                            <input type="range" id="input-tile-b" min="1" max="5" value="3" step="1" oninput="updateTileVisualizer()" class="w-full accent-primary-600 cursor-pointer">
+                        </div>
+
+                        <!-- Tile Legend -->
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-2 text-xs">
+                            <div class="font-bold text-slate-700 mb-1">圖塊圖例說明：</div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-5 h-5 bg-blue-500 rounded sm font-mono text-[10px] text-white flex items-center justify-center font-bold">x²</span>
+                                <span>大正方形：面積 $x \times x = x^2$</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-5 h-3 bg-emerald-500 rounded sm font-mono text-[10px] text-white flex items-center justify-center font-bold">x</span>
+                                <span>長方形：面積 $x \times 1 = x$</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 bg-amber-400 rounded sm font-mono text-[10px] text-white flex items-center justify-center font-bold">1</span>
+                                <span>小正方形：面積 $1 \times 1 = 1$</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Canvas Tile Area -->
+                    <div class="lg:col-span-8 bg-slate-900 rounded-2xl p-6 text-white flex flex-col items-center justify-center min-h-[360px] shadow-inner relative overflow-hidden">
+                        <div class="text-xs text-slate-400 mb-2">長方形總面積拆解圖示</div>
+                        
+                        <!-- Math Result Display -->
+                        <div id="tile-math-formula" class="text-xl sm:text-2xl font-mono font-bold mb-6 text-amber-300">
+                            $$x^2 + 5x + 6 = (x + 2)(x + 3)$$
+                        </div>
+
+                        <!-- Interactive SVG Rectangle Visualizer -->
+                        <div class="w-full max-w-md flex justify-center items-center">
+                            <div id="tile-svg-container" class="w-full h-64 flex items-center justify-center">
+                                <!-- SVG built dynamically -->
+                            </div>
+                        </div>
+
+                        <div class="text-xs text-slate-400 mt-4 text-center">
+                            長度 $= (x + <span id="txt-tile-a">2</span>)$ ，寬度 $= (x + <span id="txt-tile-b">3</span>)$ $\rightarrow$ 總面積 $= x^2 + <span id="txt-tile-sum">5</span>x + <span id="txt-tile-prod">6</span>$
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TAB 3: 十字相乘實驗室 ================= -->
+        <section id="section-cross-visual" class="hidden space-y-6">
+            <!-- Back to Home Bar -->
+            <div class="flex items-center justify-between bg-white px-4 py-2.5 rounded-xl border border-slate-200 text-xs shadow-sm">
+                <button onclick="switchTab('home')" class="text-primary-600 hover:text-primary-700 font-bold flex items-center gap-1.5">
+                    <i class="fa-solid fa-arrow-left"></i> 返回探索首頁
+                </button>
+                <span class="text-slate-400">單元 3 / 5 ｜ 十字相乘實驗室</span>
+            </div>
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+                
+                <!-- Lab Mode Switcher -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b pb-4 mb-6 gap-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-flask text-rose-600"></i> 十字相乘實驗室
+                        </h2>
+                        <p class="text-sm text-slate-500">提供「自動幾何探索」與「🎮 手動拼湊挑戰」雙重體驗！</p>
+                    </div>
+
+                    <div class="flex bg-slate-100 p-1 rounded-xl text-xs font-semibold">
+                        <button onclick="setLabMode('auto')" id="btn-lab-auto" class="px-4 py-2 rounded-lg bg-white shadow-sm text-primary-600 transition">
+                            <i class="fa-solid fa-sliders mr-1"></i> 動態探索模式
+                        </button>
+                        <button onclick="setLabMode('manual')" id="btn-lab-manual" class="px-4 py-2 rounded-lg text-slate-600 hover:text-slate-900 transition">
+                            <i class="fa-solid fa-hand-pointer mr-1"></i> 手動拆解試錯挑戰
+                        </button>
+                    </div>
+                </div>
+
+                <!-- MODE A: AUTO SLIDERS -->
+                <div id="lab-mode-auto" class="space-y-6">
+                    <!-- Quick Presets -->
+                    <div class="flex flex-wrap gap-2 items-center text-xs">
+                        <span class="font-bold text-slate-600">快速預設題型：</span>
+                        <button onclick="setVisualPreset(1, 5, 6)" class="px-3 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg transition">$x^2 + 5x + 6$</button>
+                        <button onclick="setVisualPreset(1, -2, -8)" class="px-3 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg transition">$x^2 - 2x - 8$</button>
+                        <button onclick="setVisualPreset(2, 7, 3)" class="px-3 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg transition">$2x^2 + 7x + 3$</button>
+                        <button onclick="setVisualPreset(3, -10, 3)" class="px-3 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg transition">$3x^2 - 10x + 3$</button>
+                    </div>
+
+                    <!-- Target Display -->
+                    <div class="bg-slate-900 text-white rounded-xl p-5 text-center shadow-inner">
+                        <span class="text-xs text-slate-400 block mb-1">目標二次多項式</span>
+                        <div id="visual-target-poly" class="text-2xl sm:text-3xl font-mono font-bold tracking-wide">
+                            $$x^2 + 5x + 6$$
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                        <!-- Sliders -->
+                        <div class="lg:col-span-5 bg-slate-50 p-5 rounded-xl border border-slate-200 space-y-4">
+                            <h3 class="font-bold text-slate-700 text-sm border-b pb-2">滑動調整係數 $a, b, c$</h3>
+                            
+                            <div>
+                                <div class="flex justify-between text-xs font-semibold mb-1">
+                                    <span>$x^2$ 係數 (a)</span>
+                                    <span id="val-a-txt" class="text-primary-600 font-bold">1</span>
+                                </div>
+                                <input type="range" id="input-a" min="1" max="5" value="1" step="1" oninput="updateVisualizer()" class="w-full accent-primary-600">
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-xs font-semibold mb-1">
+                                    <span>$x$ 係數 (b)</span>
+                                    <span id="val-b-txt" class="text-primary-600 font-bold">5</span>
+                                </div>
+                                <input type="range" id="input-b" min="-20" max="20" value="5" step="1" oninput="updateVisualizer()" class="w-full accent-primary-600">
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-xs font-semibold mb-1">
+                                    <span>常數項 (c)</span>
+                                    <span id="val-c-txt" class="text-primary-600 font-bold">6</span>
+                                </div>
+                                <input type="range" id="input-c" min="-20" max="20" value="6" step="1" oninput="updateVisualizer()" class="w-full accent-primary-600">
+                            </div>
+                        </div>
+
+                        <!-- Diagram -->
+                        <div class="lg:col-span-7 bg-white p-6 rounded-xl border border-slate-200 flex flex-col items-center justify-center min-h-[300px]">
+                            <div id="visual-diagram-container" class="w-full flex flex-col items-center">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MODE B: MANUAL LAB -->
+                <div id="lab-mode-manual" class="hidden space-y-6">
+                    <div class="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 p-4 rounded-xl text-center">
+                        <span class="text-xs text-purple-700 font-bold block mb-1">🎮 手動試錯挑戰目標</span>
+                        <div class="text-2xl font-mono font-bold text-slate-800" id="manual-target-display">
+                            $$x^2 - 5x + 6$$
+                        </div>
+                        <p class="text-xs text-slate-500 mt-1">請為二次項 $a=1$ 與常數項 $c=6$ 選擇因子對，湊出一次項 $b = -5$！</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                        <!-- Left Controls: Factor Selection -->
+                        <div class="bg-slate-50 p-5 rounded-xl border border-slate-200 space-y-4">
+                            <h3 class="font-bold text-slate-700 text-sm">步驟 1：挑選因子組合</h3>
+                            
+                            <!-- Select a factors -->
+                            <div>
+                                <label class="text-xs font-bold text-slate-600 block mb-1">拆解二次項 $a=1$ 的因子對 $(p, q)$：</label>
+                                <div class="flex gap-2" id="manual-a-buttons">
+                                    <!-- Dynamic buttons -->
+                                </div>
+                            </div>
+
+                            <!-- Select c factors -->
+                            <div>
+                                <label class="text-xs font-bold text-slate-600 block mb-1">拆解常數項 $c=6$ 的因子對 $(m, n)$：</label>
+                                <div class="grid grid-cols-2 gap-2" id="manual-c-buttons">
+                                    <!-- Dynamic buttons -->
+                                </div>
+                            </div>
+
+                            <button onclick="testManualCross()" class="w-full py-3 bg-secondary-600 hover:bg-secondary-700 text-white font-bold rounded-xl shadow transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-calculator"></i> 測試交叉相乘結果
+                            </button>
+                        </div>
+
+                        <!-- Right Output -->
+                        <div class="bg-white p-6 rounded-xl border border-slate-200 text-center min-h-[260px] flex flex-col items-center justify-center">
+                            <div id="manual-result-box" class="w-full">
+                                <p class="text-slate-400 text-sm">請點擊左側因子按鈕並點擊「測試交叉相乘」！</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================= TAB 4: 解題助手 ================= -->
+        <section id="section-solver" class="hidden space-y-6">
+            <!-- Back to Home Bar -->
+            <div class="flex items-center justify-between bg-white px-4 py-2.5 rounded-xl border border-slate-200 text-xs shadow-sm max-w-3xl mx-auto">
+                <button onclick="switchTab('home')" class="text-primary-600 hover:text-primary-700 font-bold flex items-center gap-1.5">
+                    <i class="fa-solid fa-arrow-left"></i> 返回探索首頁
+                </button>
+                <span class="text-slate-400">單元 4 / 5 ｜ 智能解題助手</span>
+            </div>
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 max-w-3xl mx-auto">
+                <div class="text-center mb-6">
+                    <div class="w-12 h-12 bg-secondary-100 text-secondary-600 rounded-full flex items-center justify-center mx-auto mb-2 text-xl font-bold shadow-sm">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-slate-800">二次三項式因式分解助手</h2>
+                    <p class="text-sm text-slate-500">輸入 $a, b, c$ 係數，即時產生完整拆解過程與十字相乘驗證圖！</p>
+                </div>
+
+                <form onsubmit="solveEquation(event)" class="space-y-4">
+                    <div class="flex items-center justify-center gap-2 text-base sm:text-lg font-mono bg-slate-50 p-4 rounded-xl border border-slate-200 flex-wrap">
+                        <input type="number" id="solve-a" value="1" placeholder="a" class="w-16 p-2 text-center border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none font-bold">
+                        <span>$x^2 + $</span>
+                        <input type="number" id="solve-b" value="-5" placeholder="b" class="w-16 p-2 text-center border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none font-bold">
+                        <span>$x + $</span>
+                        <input type="number" id="solve-c" value="6" placeholder="c" class="w-16 p-2 text-center border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none font-bold">
+                        <span>$= 0$</span>
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="bg-primary-600 hover:bg-primary-700 text-white font-semibold px-6 py-2.5 rounded-xl shadow-md transition flex items-center gap-2 mx-auto">
+                            <i class="fa-solid fa-calculator"></i> 開始分析解題
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Solver Output Result -->
+                <div id="solver-result" class="mt-8 hidden border-t border-slate-200 pt-6">
+                    <!-- Dynamic solver results -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TAB 5: 隨堂闖關挑戰 (Quiz) ================= -->
+        <section id="section-quiz" class="hidden space-y-6">
+            <!-- Back to Home Bar -->
+            <div class="flex items-center justify-between bg-white px-4 py-2.5 rounded-xl border border-slate-200 text-xs shadow-sm max-w-2xl mx-auto">
+                <button onclick="switchTab('home')" class="text-primary-600 hover:text-primary-700 font-bold flex items-center gap-1.5">
+                    <i class="fa-solid fa-arrow-left"></i> 返回探索首頁
+                </button>
+                <span class="text-slate-400">單元 5 / 5 ｜ 隨堂闖關挑戰</span>
+            </div>
+            <div class="max-w-2xl mx-auto bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+                <!-- Quiz Progress Bar & Badges -->
+                <div class="flex items-center justify-between text-xs text-slate-500 mb-3">
+                    <span id="quiz-progress-text" class="font-bold text-slate-700">關卡 1 / 5</span>
+                    <div class="flex items-center gap-2">
+                        <span id="quiz-streak" class="hidden px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 font-bold">🔥 連勝 0</span>
+                        <span id="quiz-difficulty" class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-semibold">基礎題</span>
+                    </div>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-2 mb-6 overflow-hidden">
+                    <div id="quiz-progress-bar" class="bg-primary-600 h-2 rounded-full transition-all duration-300" style="width: 20%;"></div>
+                </div>
+
+                <!-- Question Card -->
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-6 mb-6 text-center relative overflow-hidden">
+                    <span class="text-xs text-primary-600 font-bold uppercase tracking-wider block mb-2">請對以下多項式進行因式分解</span>
+                    <div id="quiz-question" class="text-2xl sm:text-3xl font-mono font-bold text-slate-800 my-4">
+                        $$x^2 + 7x + 12$$
+                    </div>
+                    <button id="quiz-hint-btn" onclick="toggleHint()" class="text-xs text-slate-500 hover:text-amber-600 flex items-center gap-1 mx-auto transition">
+                        <i class="fa-regular fa-lightbulb text-amber-500"></i> 需要提示？
+                    </button>
+                    <div id="quiz-hint-box" class="hidden text-xs text-amber-800 bg-amber-50 border border-amber-200 p-3 rounded-lg mt-3 text-left">
+                        <!-- Hint text -->
+                    </div>
+                </div>
+
+                <!-- Options Grid -->
+                <div id="quiz-options" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+                    <!-- Options populated by JS -->
+                </div>
+
+                <!-- Feedback Banner -->
+                <div id="quiz-feedback" class="hidden p-4 rounded-xl text-sm font-medium mb-4 flex items-center gap-3">
+                    <!-- Feedback populated by JS -->
+                </div>
+
+                <!-- Next Question Button -->
+                <div class="text-center">
+                    <button id="quiz-next-btn" onclick="nextQuestion()" class="hidden bg-slate-900 hover:bg-slate-800 text-white font-semibold px-6 py-2.5 rounded-xl shadow transition mx-auto">
+                        下一題 <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 mt-12 py-8 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 space-y-3">
+            <div class="flex items-center justify-center gap-2 font-bold text-slate-700 text-sm">
+                <div class="w-6 h-6 rounded-lg bg-primary-600 text-white flex items-center justify-center text-xs font-mono">x²</div>
+                <span>國中數學：因式分解大冒險 Pro</span>
+            </div>
+            <p>專為國中學生設計的互動數學探索與學習門戶 ｜ 涵蓋提公因式、平方差、完全平方與十字相乘法</p>
+            <div class="flex flex-wrap justify-center gap-4 text-primary-600 font-semibold pt-1">
+                <button onclick="switchTab('home')" class="hover:underline">首頁門戶</button>
+                <span>•</span>
+                <button onclick="switchTab('concepts')" class="hover:underline">觀念教室</button>
+                <span>•</span>
+                <button onclick="switchTab('tiles')" class="hover:underline">幾何拼圖</button>
+                <span>•</span>
+                <button onclick="switchTab('cross-visual')" class="hover:underline">十字相乘</button>
+                <span>•</span>
+                <button onclick="switchTab('solver')" class="hover:underline">解題助手</button>
+                <span>•</span>
+                <button onclick="switchTab('quiz')" class="hover:underline">闖關挑戰</button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal: Proof Modal -->
+    <div id="proof-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 hidden p-4">
+        <div class="bg-white rounded-2xl p-6 max-w-lg w-full shadow-2xl relative space-y-4">
+            <button onclick="closeGeometricProofModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-vector-square text-emerald-600"></i> 平方差幾何證明圖解
+            </h3>
+            <p class="text-xs text-slate-500">大正方形 $a^2$ 剪去小正方形 $b^2$ 後，剩餘面積可剪拼成長 $(a+b)$、寬 $(a-b)$ 的矩形！</p>
+            <div class="bg-slate-50 p-4 rounded-xl border text-center font-mono">
+                $$a^2 - b^2 = (a+b)(a-b)$$
+                <div class="w-full h-40 bg-white border border-slate-200 rounded-lg my-2 flex items-center justify-center text-slate-400 text-xs">
+                    <svg class="w-48 h-36" viewBox="0 0 200 150">
+                        <rect x="10" y="10" width="120" height="120" fill="#3b82f6" opacity="0.3" stroke="#2563eb" stroke-width="2"/>
+                        <rect x="90" y="10" width="40" height="40" fill="#ef4444" opacity="0.4" stroke="#dc2626" stroke-width="2"/>
+                        <text x="50" y="80" fill="#1e3a8a" font-size="12" font-weight="bold">a² - b²</text>
+                        <text x="105" y="32" fill="#991b1b" font-size="10">b²</text>
+                    </svg>
+                </div>
+            </div>
+            <button onclick="closeGeometricProofModal()" class="w-full py-2 bg-slate-800 text-white font-bold rounded-xl text-xs">我明白了！</button>
+        </div>
+    </div>
+
+    <!-- Modal Toast Container -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400"></i>
+        <span id="toast-msg" class="text-sm">訊息提示</span>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Audio Engine using Web Audio API
+        let soundEnabled = true;
+        let audioCtx = null;
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                const now = audioCtx.currentTime;
+
+                if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(500, now);
+                    gain.gain.setValueAtTime(0.08, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                } else if (type === 'correct') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, now); // C5
+                    osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
+                    osc.frequency.setValueAtTime(783.99, now + 0.16); // G5
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+                    osc.start(now);
+                    osc.stop(now + 0.35);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(200, now);
+                    osc.frequency.setValueAtTime(150, now + 0.12);
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                } else if (type === 'fanfare') {
+                    [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+                        const o = audioCtx.createOscillator();
+                        const g = audioCtx.createGain();
+                        o.type = 'sine';
+                        o.frequency.setValueAtTime(freq, now + idx * 0.1);
+                        o.connect(g);
+                        g.connect(audioCtx.destination);
+                        g.gain.setValueAtTime(0.1, now + idx * 0.1);
+                        g.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.1 + 0.3);
+                        o.start(now + idx * 0.1);
+                        o.stop(now + idx * 0.1 + 0.3);
+                    });
+                }
+            } catch (e) {
+                console.log("Audio not supported or blocked");
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('sound-icon');
+            if (soundEnabled) {
+                icon.className = 'fa-solid fa-volume-high text-primary-600';
+                showToast("音效已開啟");
+                playSound('click');
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark text-slate-400';
+                showToast("音效已靜音");
+            }
+        }
+
+        // Global Quiz & App State
+        let score = 0;
+        let streak = 0;
+        let currentQuizIndex = 0;
+        let quizQuestions = [
+            {
+                q: "x^2 + 7x + 12",
+                a: 1, b: 7, c: 12,
+                options: ["(x + 3)(x + 4)", "(x + 2)(x + 6)", "(x + 1)(x + 12)", "(x - 3)(x - 4)"],
+                correct: 0,
+                hint: "找兩個數，相乘等於 12，相加等於 7 (3 + 4 = 7)",
+                diff: "基礎題"
+            },
+            {
+                q: "x^2 - 5x + 6",
+                a: 1, b: -5, c: 6,
+                options: ["(x - 2)(x - 3)", "(x + 2)(x + 3)", "(x - 1)(x - 6)", "(x + 1)(x - 6)"],
+                correct: 0,
+                hint: "相乘等於 +6，相加等於 -5，代表兩個數都是負數！ (-2) × (-3) = 6",
+                diff: "基礎題"
+            },
+            {
+                q: "x^2 - 16",
+                a: 1, b: 0, c: -16,
+                options: ["(x - 4)^2", "(x + 4)(x - 4)", "(x + 8)(x - 2)", "無法分解"],
+                correct: 1,
+                hint: "利用平方差公式：a² - b² = (a + b)(a - b)，其中 16 = 4²",
+                diff: "公式題"
+            },
+            {
+                q: "2x^2 + 5x + 3",
+                a: 2, b: 5, c: 3,
+                options: ["(2x + 1)(x + 3)", "(2x + 3)(x + 1)", "(2x + 5)(x + 1)", "(x + 2)(2x + 3)"],
+                correct: 1,
+                hint: "2 拆成 2 和 1，3 拆成 3 和 1。交叉相乘：2×1 + 1×3 = 5",
+                diff: "進階題"
+            },
+            {
+                q: "3x^2 - 10x + 3",
+                a: 3, b: -10, c: 3,
+                options: ["(3x - 1)(x - 3)", "(3x - 3)(x - 1)", "(3x + 1)(x + 3)", "(3x - 9)(x - 1)"],
+                correct: 0,
+                hint: "3 拆成 3 和 1，+3 拆成 -1 和 -3。交叉相乘：3×(-3) + 1×(-1) = -10",
+                diff: "挑戰題"
+            }
+        ];
+
+        // Toast Notification Helper
+        function showToast(msg, iconClass = "fa-solid fa-circle-check text-emerald-400") {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-msg');
+            const toastIcon = document.getElementById('toast-icon');
+            
+            toastMsg.innerText = msg;
+            toastIcon.className = iconClass;
+            
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
+
+        // Factorization Logic Helper
+        function getFactorPairs(n) {
+            const pairs = [];
+            const absN = Math.abs(n);
+            for (let i = 1; i <= Math.sqrt(absN); i++) {
+                if (absN % i === 0) {
+                    let f1 = i;
+                    let f2 = absN / i;
+                    if (n > 0) {
+                        pairs.push([f1, f2]);
+                        pairs.push([-f1, -f2]);
+                    } else {
+                        pairs.push([f1, -f2]);
+                        pairs.push([-f1, f2]);
+                    }
+                }
+            }
+            return pairs;
+        }
+
+        function factorizeQuadratic(a, b, c) {
+            const aPairs = [];
+            for (let i = 1; i <= Math.abs(a); i++) {
+                if (a % i === 0) {
+                    aPairs.push([i, a / i]);
+                }
+            }
+
+            const cPairs = getFactorPairs(c);
+
+            for (let [p, q] of aPairs) {
+                for (let [m, n] of cPairs) {
+                    if (p * n + q * m === b) {
+                        return { found: true, p, q, m, n };
+                    }
+                    if (p * m + q * n === b) {
+                        return { found: true, p, q, m: n, n: m };
+                    }
+                }
+            }
+            return { found: false };
+        }
+
+        // Student Profile & Character Logic
+        let currentAvatar = '🚀';
+        let currentRole = '探險家';
+
+        function setAvatar(emoji, role, btn) {
+            playSound('click');
+            currentAvatar = emoji;
+            currentRole = role;
+            document.querySelectorAll('.avatar-btn').forEach(b => {
+                b.className = 'avatar-btn px-2 py-1 hover:bg-white/10 border border-transparent rounded-lg text-sm transition';
+            });
+            btn.className = 'avatar-btn active-avatar px-2 py-1 bg-primary-600/40 border border-primary-400 rounded-lg text-sm transition';
+            const roleEl = document.getElementById('student-role-display');
+            if (roleEl) roleEl.innerText = `${emoji} ${role}`;
+            showToast(`已切換冒險者身分：${role}！`);
+        }
+
+        function updateHomeBadges() {
+            const homeScoreEl = document.getElementById('home-score');
+            if (homeScoreEl) homeScoreEl.innerText = score;
+            const badgeEl = document.getElementById('home-progress-badge');
+            if (badgeEl) {
+                if (score >= 100) badgeEl.innerText = "🏅 因式分解至尊";
+                else if (score >= 80) badgeEl.innerText = "⭐ 幾何大師";
+                else if (score >= 60) badgeEl.innerText = "🔥 算式法師";
+                else if (score >= 40) badgeEl.innerText = "✨ 冒險學徒";
+                else if (score >= 20) badgeEl.innerText = "🌱 初露鋒芒";
+                else badgeEl.innerText = "新手上路";
+            }
+        }
+
+        // Navigation Switcher
+        function switchTab(tabId) {
+            playSound('click');
+            const sections = ['home', 'concepts', 'tiles', 'cross-visual', 'solver', 'quiz'];
+            sections.forEach(s => {
+                const secEl = document.getElementById(`section-${s}`);
+                const tabEl = document.getElementById(`tab-${s}`);
+                const mobTabEl = document.getElementById(`mob-tab-${s}`);
+                
+                if (s === tabId) {
+                    if (secEl) secEl.classList.remove('hidden');
+                    if (tabEl) tabEl.classList.add('active');
+                    if (mobTabEl) {
+                        mobTabEl.classList.add('text-primary-600', 'font-bold', 'border-b-2', 'border-primary-600');
+                        mobTabEl.classList.remove('text-slate-600');
+                    }
+                } else {
+                    if (secEl) secEl.classList.add('hidden');
+                    if (tabEl) tabEl.classList.remove('active');
+                    if (mobTabEl) {
+                        mobTabEl.classList.remove('text-primary-600', 'font-bold', 'border-b-2', 'border-primary-600');
+                        mobTabEl.classList.add('text-slate-600');
+                    }
+                }
+            });
+
+            // Trigger updates if specific tab opened
+            if (tabId === 'tiles') updateTileVisualizer();
+            if (tabId === 'cross-visual') updateVisualizer();
+            if (tabId === 'home') updateHomeBadges();
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false}
+                ]
+            });
+        }
+
+        // TAB 1 Interactions
+        function interactCommonFactor(el, cf) {
+            playSound('correct');
+            document.getElementById('cf-output').innerHTML = `
+                <span class="text-emerald-600 font-bold">🎉 太棒了！</span> 兩項都包含 <span class="bg-amber-200 px-1 rounded">${cf}</span>！<br>
+                提出公因式後：$$3x^2 + 6x = 3x(x + 2)$$
+            `;
+            renderMathInElement(document.getElementById('cf-output'), {
+                delimiters: [{left: '$$', right: '$$', display: false}]
+            });
+        }
+
+        let isFormulaExpand = false;
+        function toggleFormulaMode() {
+            playSound('click');
+            isFormulaExpand = !isFormulaExpand;
+            const diffEl = document.getElementById('formula-diff');
+            const sqEl = document.getElementById('formula-sq');
+            const btn = document.getElementById('formula-toggle-btn');
+
+            if (isFormulaExpand) {
+                diffEl.innerHTML = "$$(a+b)(a-b) = a^2 - b^2$$";
+                sqEl.innerHTML = "$$(a \\pm b)^2 = a^2 \\pm 2ab + b^2$$";
+                btn.innerText = "切換：因式分解 ⇄ 展開";
+            } else {
+                diffEl.innerHTML = "$$a^2 - b^2 = (a+b)(a-b)$$";
+                sqEl.innerHTML = "$$a^2 \\pm 2ab + b^2 = (a \\pm b)^2$$";
+                btn.innerText = "切換：展開 ⇄ 因式分解";
+            }
+            renderMathInElement(document.getElementById('section-concepts'), {
+                delimiters: [{left: '$$', right: '$$', display: false}]
+            });
+        }
+
+        function showGeometricProofModal() {
+            playSound('click');
+            document.getElementById('proof-modal').classList.remove('hidden');
+            renderMathInElement(document.getElementById('proof-modal'), {
+                delimiters: [{left: '$$', right: '$$', display: false}]
+            });
+        }
+
+        function closeGeometricProofModal() {
+            playSound('click');
+            document.getElementById('proof-modal').classList.add('hidden');
+        }
+
+        // TAB 2: Algebra Tiles Visualizer logic
+        function setTilePreset(a, b, sum) {
+            playSound('click');
+            document.getElementById('input-tile-a').value = a;
+            document.getElementById('input-tile-b').value = b;
+            updateTileVisualizer();
+        }
+
+        function updateTileVisualizer() {
+            const a = parseInt(document.getElementById('input-tile-a').value);
+            const b = parseInt(document.getElementById('input-tile-b').value);
+
+            document.getElementById('val-tile-a').innerText = a;
+            document.getElementById('val-tile-b').innerText = b;
+
+            document.getElementById('txt-tile-a').innerText = a;
+            document.getElementById('txt-tile-b').innerText = b;
+            document.getElementById('txt-tile-sum').innerText = (a + b);
+            document.getElementById('txt-tile-prod').innerText = (a * b);
+
+            const mathFormula = document.getElementById('tile-math-formula');
+            mathFormula.innerHTML = `$$x^2 + ${a+b}x + ${a*b} = (x + ${a})(x + ${b})$$`;
+
+            // Draw SVG Tile Area
+            const container = document.getElementById('tile-svg-container');
+            
+            // Tile sizing
+            const scale = 22;
+            const xSize = 4 * scale;
+            const uSize = 1 * scale;
+
+            const totalWidth = xSize + b * uSize;
+            const totalHeight = xSize + a * uSize;
+
+            let svgContent = `<svg width="${totalWidth + 40}" height="${totalHeight + 40}" viewBox="-20 -20 ${totalWidth + 40} ${totalHeight + 40}">`;
+
+            // Top Label (x + b)
+            svgContent += `<text x="${xSize/2}" y="-8" fill="#94a3b8" font-size="12" font-weight="bold" text-anchor="middle">x</text>`;
+            for(let i=0; i<b; i++) {
+                svgContent += `<text x="${xSize + i*uSize + uSize/2}" y="-8" fill="#fbbf24" font-size="10" font-weight="bold" text-anchor="middle">1</text>`;
+            }
+
+            // Left Label (x + a)
+            svgContent += `<text x="-10" y="${xSize/2 + 4}" fill="#94a3b8" font-size="12" font-weight="bold" text-anchor="middle">x</text>`;
+            for(let j=0; j<a; j++) {
+                svgContent += `<text x="-10" y="${xSize + j*uSize + uSize/2 + 4}" fill="#fbbf24" font-size="10" font-weight="bold" text-anchor="middle">1</text>`;
+            }
+
+            // 1. x^2 Tile (Blue)
+            svgContent += `<rect x="0" y="0" width="${xSize}" height="${xSize}" fill="#3b82f6" rx="4" stroke="#ffffff" stroke-width="2" class="tile-block"/>`;
+            svgContent += `<text x="${xSize/2}" y="${xSize/2 + 5}" fill="#ffffff" font-size="16" font-weight="bold" text-anchor="middle">x²</text>`;
+
+            // 2. x Tiles Top-Right (Green, width=1, height=x)
+            for(let i=0; i<b; i++) {
+                svgContent += `<rect x="${xSize + i*uSize}" y="0" width="${uSize}" height="${xSize}" fill="#10b981" rx="2" stroke="#ffffff" stroke-width="1.5" class="tile-block"/>`;
+            }
+
+            // 3. x Tiles Bottom-Left (Green, width=x, height=1)
+            for(let j=0; j<a; j++) {
+                svgContent += `<rect x="0" y="${xSize + j*uSize}" width="${xSize}" height="${uSize}" fill="#10b981" rx="2" stroke="#ffffff" stroke-width="1.5" class="tile-block"/>`;
+            }
+
+            // 4. Unit 1 Tiles Bottom-Right (Amber, width=1, height=1)
+            for(let j=0; j<a; j++) {
+                for(let i=0; i<b; i++) {
+                    svgContent += `<rect x="${xSize + i*uSize}" y="${xSize + j*uSize}" width="${uSize}" height="${uSize}" fill="#f59e0b" rx="2" stroke="#ffffff" stroke-width="1" class="tile-block"/>`;
+                }
+            }
+
+            svgContent += `</svg>`;
+            container.innerHTML = svgContent;
+
+            renderMathInElement(mathFormula, {
+                delimiters: [{left: '$$', right: '$$', display: true}]
+            });
+        }
+
+        // TAB 3: Cross Multiplication Lab logic
+        let currentLabMode = 'auto';
+        let manualSelectedP = 1, manualSelectedQ = 1;
+        let manualSelectedM = 1, manualSelectedN = 6;
+
+        function setLabMode(mode) {
+            playSound('click');
+            currentLabMode = mode;
+            const btnAuto = document.getElementById('btn-lab-auto');
+            const btnManual = document.getElementById('btn-lab-manual');
+            const secAuto = document.getElementById('lab-mode-auto');
+            const secManual = document.getElementById('lab-mode-manual');
+
+            if (mode === 'auto') {
+                btnAuto.className = "px-4 py-2 rounded-lg bg-white shadow-sm text-primary-600 transition font-bold";
+                btnManual.className = "px-4 py-2 rounded-lg text-slate-600 hover:text-slate-900 transition";
+                secAuto.classList.remove('hidden');
+                secManual.classList.add('hidden');
+            } else {
+                btnManual.className = "px-4 py-2 rounded-lg bg-white shadow-sm text-secondary-600 transition font-bold";
+                btnAuto.className = "px-4 py-2 rounded-lg text-slate-600 hover:text-slate-900 transition";
+                secManual.classList.remove('hidden');
+                secAuto.classList.add('hidden');
+                initManualLab();
+            }
+        }
+
+        function setVisualPreset(a, b, c) {
+            playSound('click');
+            document.getElementById('input-a').value = a;
+            document.getElementById('input-b').value = b;
+            document.getElementById('input-c').value = c;
+            updateVisualizer();
+        }
+
+        function updateVisualizer() {
+            const a = parseInt(document.getElementById('input-a').value);
+            const b = parseInt(document.getElementById('input-b').value);
+            const c = parseInt(document.getElementById('input-c').value);
+
+            document.getElementById('val-a-txt').innerText = a;
+            document.getElementById('val-b-txt').innerText = b;
+            document.getElementById('val-c-txt').innerText = c;
+
+            // Format Polynomial
+            let polyStr = "";
+            if (a === 1) polyStr += "x^2";
+            else if (a === -1) polyStr += "-x^2";
+            else polyStr += `${a}x^2`;
+
+            if (b > 0) polyStr += ` + ${b === 1 ? '' : b}x`;
+            else if (b < 0) polyStr += ` - ${Math.abs(b) === 1 ? '' : Math.abs(b)}x`;
+
+            if (c > 0) polyStr += ` + ${c}`;
+            else if (c < 0) polyStr += ` - ${Math.abs(c)}`;
+
+            const targetEl = document.getElementById('visual-target-poly');
+            targetEl.innerHTML = `$$${polyStr}$$`;
+
+            // Factorize
+            const result = factorizeQuadratic(a, b, c);
+            const diagramContainer = document.getElementById('visual-diagram-container');
+
+            if (result.found) {
+                const { p, q, m, n } = result;
+                diagramContainer.innerHTML = `
+                    <div class="flex items-center justify-center gap-8 sm:gap-12 my-4 font-mono text-xl">
+                        <div class="flex flex-col items-center gap-6 font-bold">
+                            <span class="bg-blue-50 text-blue-700 px-3 py-1 rounded-lg border border-blue-200">${p === 1 ? '' : p}x</span>
+                            <span class="bg-blue-50 text-blue-700 px-3 py-1 rounded-lg border border-blue-200">${q === 1 ? '' : q}x</span>
+                        </div>
+
+                        <div class="w-20 h-20 relative flex items-center justify-center">
+                            <svg class="w-full h-full" viewBox="0 0 100 100">
+                                <line x1="10" y1="20" x2="90" y2="80" class="cross-line-1" />
+                                <line x1="10" y1="80" x2="90" y2="20" class="cross-line-2" />
+                            </svg>
+                        </div>
+
+                        <div class="flex flex-col items-center gap-6 font-bold">
+                            <span class="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-lg border border-emerald-200">${m > 0 ? '+' + m : m}</span>
+                            <span class="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-lg border border-emerald-200">${n > 0 ? '+' + n : n}</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl text-center w-full max-w-md space-y-1.5">
+                        <div class="text-xs text-slate-500 font-semibold uppercase">交叉相乘檢查</div>
+                        <div class="text-sm font-mono text-slate-700">
+                            (${p === 1 ? '' : p}x) × (${n}) + (${q === 1 ? '' : q}x) × (${m}) = <span class="font-bold text-primary-600">${p*n + q*m}x</span>
+                        </div>
+                        <div class="text-xs text-emerald-600 font-bold flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-circle-check"></i> 成功湊出一次項 $${b}x$！
+                        </div>
+                    </div>
+
+                    <div class="mt-4 p-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold rounded-xl text-center text-lg shadow">
+                        因式分解解答：$$(${p === 1 ? 'x' : p + 'x'} ${m >= 0 ? '+ ' + m : m})(${q === 1 ? 'x' : q + 'x'} ${n >= 0 ? '+ ' + n : n})$$
+                    </div>
+                `;
+            } else {
+                diagramContainer.innerHTML = `
+                    <div class="text-center py-8">
+                        <i class="fa-solid fa-face-frown text-slate-300 text-4xl mb-3"></i>
+                        <p class="text-slate-600 font-medium">在整數範圍內無法進行十字相乘分解</p>
+                        <p class="text-xs text-slate-400 mt-1">請試著調整 $a, b, c$ 數值。</p>
+                    </div>
+                `;
+            }
+
+            renderMathInElement(diagramContainer, {
+                delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]
+            });
+        }
+
+        // Manual Lab Pairing Logic
+        function initManualLab() {
+            const targetA = 1, targetB = -5, targetC = 6;
+            
+            // Render factor buttons for a=1
+            const aBtnContainer = document.getElementById('manual-a-buttons');
+            aBtnContainer.innerHTML = `
+                <button onclick="selectManualFactorA(1, 1, this)" class="manual-a-btn bg-purple-600 text-white font-mono px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm">
+                    (1x, 1x)
+                </button>
+            `;
+            manualSelectedP = 1; manualSelectedQ = 1;
+
+            // Render factor buttons for c=6
+            const cPairs = [[1, 6], [2, 3], [-1, -6], [-2, -3]];
+            const cBtnContainer = document.getElementById('manual-c-buttons');
+            cBtnContainer.innerHTML = '';
+
+            cPairs.forEach(([m, n], idx) => {
+                const btn = document.createElement('button');
+                btn.className = `manual-c-btn font-mono p-2 border rounded-lg text-xs font-bold transition text-center ${idx === 3 ? 'bg-purple-600 text-white' : 'bg-white text-slate-700 border-slate-200'}`;
+                btn.innerText = `(${m > 0 ? '+'+m : m}, ${n > 0 ? '+'+n : n})`;
+                btn.onclick = () => selectManualFactorC(m, n, btn);
+                cBtnContainer.appendChild(btn);
+            });
+            manualSelectedM = -2; manualSelectedN = -3;
+        }
+
+        function selectManualFactorA(p, q, el) {
+            playSound('click');
+            manualSelectedP = p; manualSelectedQ = q;
+            document.querySelectorAll('.manual-a-btn').forEach(b => b.className = 'manual-a-btn bg-white text-slate-700 border border-slate-200 font-mono px-3 py-1.5 rounded-lg text-xs font-bold');
+            el.className = 'manual-a-btn bg-purple-600 text-white font-mono px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm';
+        }
+
+        function selectManualFactorC(m, n, el) {
+            playSound('click');
+            manualSelectedM = m; manualSelectedN = n;
+            document.querySelectorAll('.manual-c-btn').forEach(b => b.className = 'manual-c-btn bg-white text-slate-700 border border-slate-200 font-mono p-2 rounded-lg text-xs font-bold');
+            el.className = 'manual-c-btn bg-purple-600 text-white font-mono p-2 rounded-lg text-xs font-bold shadow-sm';
+        }
+
+        function testManualCross() {
+            const p = manualSelectedP, q = manualSelectedQ;
+            const m = manualSelectedM, n = manualSelectedN;
+            const targetB = -5;
+
+            const crossVal = p*n + q*m;
+            const box = document.getElementById('manual-result-box');
+
+            if (crossVal === targetB) {
+                playSound('fanfare');
+                confetti({ particleCount: 60, spread: 70, origin: { y: 0.7 } });
+                box.innerHTML = `
+                    <div class="space-y-3">
+                        <div class="inline-block bg-emerald-100 text-emerald-800 text-xs px-3 py-1 rounded-full font-bold">
+                            🎉 恭喜配對成功！
+                        </div>
+                        <div class="text-base font-mono font-bold text-slate-800">
+                            (${p}x) × (${n}) + (${q}x) × (${m}) = <span class="text-emerald-600">${crossVal}x</span>
+                        </div>
+                        <p class="text-xs text-slate-500">順利湊出一次項 $-5x$！</p>
+                        <div class="p-3 bg-emerald-600 text-white rounded-xl font-mono font-bold">
+                            因式分解：(x ${m >= 0 ? '+ '+m : m})(x ${n >= 0 ? '+ '+n : n})
+                        </div>
+                    </div>
+                `;
+            } else {
+                playSound('wrong');
+                box.innerHTML = `
+                    <div class="space-y-2">
+                        <div class="inline-block bg-rose-100 text-rose-800 text-xs px-3 py-1 rounded-full font-bold">
+                            ❌ 交叉相乘結果不符合！
+                        </div>
+                        <div class="text-sm font-mono text-slate-700">
+                            (${p}x) × (${n}) + (${q}x) × (${m}) = <span class="text-rose-600 font-bold">${crossVal}x</span>
+                        </div>
+                        <p class="text-xs text-slate-500">目標是一次項 $-5x$，但你湊出了 ${crossVal}x。請重新選擇因數組合！</p>
+                    </div>
+                `;
+            }
+        }
+
+        // TAB 4: Solver logic
+        function solveEquation(e) {
+            e.preventDefault();
+            playSound('click');
+            const a = parseInt(document.getElementById('solve-a').value);
+            const b = parseInt(document.getElementById('solve-b').value);
+            const c = parseInt(document.getElementById('solve-c').value);
+
+            const resultContainer = document.getElementById('solver-result');
+            resultContainer.classList.remove('hidden');
+
+            const res = factorizeQuadratic(a, b, c);
+
+            if (res.found) {
+                const { p, q, m, n } = res;
+                resultContainer.innerHTML = `
+                    <h3 class="font-bold text-slate-800 text-base mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-check text-emerald-500"></i> 分解成功！
+                    </h3>
+                    <div class="space-y-3 text-sm">
+                        <div class="bg-slate-50 p-3 rounded-lg border">
+                            <span class="font-semibold text-slate-700">步驟 1：拆解二次項與常數項</span>
+                            <p class="text-slate-600 text-xs mt-1">二次項 $${a}x^2$ 拆成 $(${p}x) \\times (${q}x)$，常數項 $${c}$ 拆成 $(${m}) \\times (${n})$</p>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-lg border">
+                            <span class="font-semibold text-slate-700">步驟 2：交叉相乘驗證</span>
+                            <p class="text-slate-600 text-xs mt-1">交叉相乘：$(${p}x \\cdot ${n}) + (${q}x \\cdot ${m}) = ${p*n + q*m}x$ (符合一次項 $${b}x$)</p>
+                        </div>
+                        <div class="bg-primary-50 border border-primary-200 p-4 rounded-xl text-center">
+                            <span class="text-xs text-primary-700 font-bold block mb-1">最終因式分解解答</span>
+                            <div class="text-xl font-bold font-mono text-primary-800">
+                                $$(${p === 1 ? 'x' : p + 'x'} ${m >= 0 ? '+ ' + m : m})(${q === 1 ? 'x' : q + 'x'} ${n >= 0 ? '+ ' + n : n})$$
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                resultContainer.innerHTML = `
+                    <div class="p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-center text-sm">
+                        <i class="fa-solid fa-triangle-exclamation mb-1 text-lg block"></i>
+                        多項式 $${a}x^2 + ${b}x + ${c}$ 無法在整數範圍內進行十字相乘因式分解！
+                    </div>
+                `;
+            }
+
+            renderMathInElement(resultContainer, {
+                delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]
+            });
+        }
+
+        // TAB 5: Quiz System logic
+        function loadQuizQuestion() {
+            const qData = quizQuestions[currentQuizIndex];
+            
+            document.getElementById('quiz-progress-text').innerText = `關卡 ${currentQuizIndex + 1} / ${quizQuestions.length}`;
+            document.getElementById('quiz-difficulty').innerText = qData.diff;
+            document.getElementById('quiz-progress-bar').style.width = `${((currentQuizIndex + 1) / quizQuestions.length) * 100}%`;
+            
+            if (streak > 1) {
+                const streakEl = document.getElementById('quiz-streak');
+                streakEl.classList.remove('hidden');
+                streakEl.innerText = `🔥 連勝 ${streak}`;
+            }
+
+            const qEl = document.getElementById('quiz-question');
+            qEl.innerHTML = `$$${qData.q}$$`;
+
+            document.getElementById('quiz-hint-box').classList.add('hidden');
+            document.getElementById('quiz-hint-box').innerText = qData.hint;
+            document.getElementById('quiz-feedback').classList.add('hidden');
+            document.getElementById('quiz-next-btn').classList.add('hidden');
+
+            const optContainer = document.getElementById('quiz-options');
+            optContainer.innerHTML = '';
+            
+            qData.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "p-4 bg-white border-2 border-slate-200 hover:border-primary-500 rounded-xl text-center font-mono font-bold text-slate-700 hover:text-primary-600 transition shadow-sm flex items-center justify-center";
+                btn.innerHTML = `$$${opt}$$`;
+                btn.onclick = () => checkAnswer(idx);
+                optContainer.appendChild(btn);
+            });
+
+            renderMathInElement(document.getElementById('section-quiz'), {
+                delimiters: [{left: '$$', right: '$$', display: true}]
+            });
+        }
+
+        function toggleHint() {
+            playSound('click');
+            const hintBox = document.getElementById('quiz-hint-box');
+            hintBox.classList.toggle('hidden');
+        }
+
+        function checkAnswer(selectedIdx) {
+            const qData = quizQuestions[currentQuizIndex];
+            const feedbackEl = document.getElementById('quiz-feedback');
+            const optBtns = document.getElementById('quiz-options').children;
+
+            for (let btn of optBtns) {
+                btn.disabled = true;
+                btn.classList.add('opacity-60', 'cursor-not-allowed');
+            }
+
+            if (selectedIdx === qData.correct) {
+                playSound('correct');
+                score += 20;
+                streak++;
+                document.getElementById('global-score').innerText = score;
+                updateHomeBadges();
+                
+                optBtns[selectedIdx].classList.remove('border-slate-200', 'opacity-60');
+                optBtns[selectedIdx].classList.add('border-emerald-500', 'bg-emerald-50', 'text-emerald-700');
+
+                feedbackEl.className = "p-4 rounded-xl text-sm font-medium mb-4 flex items-center gap-3 bg-emerald-50 text-emerald-800 border border-emerald-200";
+                feedbackEl.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 text-lg"></i> 答對了！太棒了！ (+20分)`;
+                
+                confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
+                showToast("回答正確！獲得 20 分！");
+            } else {
+                playSound('wrong');
+                streak = 0;
+                document.getElementById('quiz-streak').classList.add('hidden');
+
+                optBtns[selectedIdx].classList.remove('border-slate-200', 'opacity-60');
+                optBtns[selectedIdx].classList.add('border-rose-500', 'bg-rose-50', 'text-rose-700');
+                
+                optBtns[qData.correct].classList.remove('opacity-60');
+                optBtns[qData.correct].classList.add('border-emerald-500', 'bg-emerald-50');
+
+                feedbackEl.className = "p-4 rounded-xl text-sm font-medium mb-4 flex items-center gap-3 bg-rose-50 text-rose-800 border border-rose-200";
+                feedbackEl.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-600 text-lg"></i> 答錯囉！正確答案是 (${qData.correct + 1})`;
+            }
+
+            feedbackEl.classList.remove('hidden');
+            document.getElementById('quiz-next-btn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            playSound('click');
+            if (currentQuizIndex < quizQuestions.length - 1) {
+                currentQuizIndex++;
+                loadQuizQuestion();
+            } else {
+                playSound('fanfare');
+                const quizSection = document.getElementById('section-quiz');
+                quizSection.innerHTML = `
+                    <div class="max-w-md mx-auto bg-white rounded-2xl p-8 text-center shadow-lg border border-slate-200 space-y-4">
+                        <div class="w-20 h-20 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center mx-auto text-3xl shadow-inner">
+                            <i class="fa-solid fa-trophy"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-slate-800">闖關成功！大獲全勝！</h2>
+                        <p class="text-slate-500 text-sm">你總共獲得了 <span class="text-2xl font-bold text-amber-500">${score}</span> 分！</p>
+                        <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 font-bold">
+                            🏅 獲得稱號：【因式分解十字相乘大師】
+                        </div>
+                        <button onclick="location.reload()" class="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold px-6 py-3 rounded-xl transition shadow">
+                            再挑戰一次
+                        </button>
+                    </div>
+                `;
+                confetti({ particleCount: 120, spread: 100, origin: { y: 0.6 } });
+            }
+        }
+
+        // Window Load Event
+        window.onload = function() {
+            updateHomeBadges();
+            updateVisualizer();
+            updateTileVisualizer();
+            loadQuizQuestion();
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false}
+                ]
+            });
+        };
+    </script>
+</body>
+</html>
